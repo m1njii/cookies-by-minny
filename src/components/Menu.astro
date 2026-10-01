@@ -1,0 +1,171 @@
+---
+const cookies = [
+	{
+		name: "Choco Chip Clásica",
+		description: "Masa de vainilla con chispas de chocolate semiamargo y un toque de sal marina.",
+		price: "S/ 6.50",
+		badge: "Favorita ⭐️",
+		image: "🍪"
+	},
+	{
+		name: "Red Velvet & Cream Cheese",
+		description: "Masa suave de cacao rojo rellena de crema de queso dulce casera.",
+		price: "S/ 8.00",
+		badge: "Especial",
+		image: "🔴"
+	},
+	{
+		name: "Double Chocolate Fudge",
+		description: "Para amantes del chocolate intenso: cacao al 70% con trozos de chocolate blanco.",
+		price: "S/ 7.50",
+		badge: "Novedad 🔥",
+		image: "🍫"
+	},
+	{
+		name: "Nutella Stuffed",
+		description: "Galleta horneada con un centro abundante de Nutella cremosa derretida.",
+		price: "S/ 8.50",
+		badge: "Top Ventas",
+		image: "🌰"
+	}
+];
+---
+
+<section id="menu" class="menu-section">
+	<div class="container">
+		<h2>Nuestro <span>Menú de Galletas</span></h2>
+		<p class="subtitle">Horneadas frescas todos los días con ingredientes premium.</p>
+
+		<div class="grid">
+			{cookies.map((cookie) => (
+				<article class="card">
+					<div class="card-header">
+						<span class="badge">{cookie.badge}</span>
+						<div class="cookie-icon">{cookie.image}</div>
+					</div>
+					<h3>{cookie.name}</h3>
+					<p class="desc">{cookie.description}</p>
+					<div class="card-footer">
+						<span class="price">{cookie.price}</span>
+						<a href="#contacto" class="btn-card">Pedir</a>
+					</div>
+				</article>
+			))}
+		</div>
+	</div>
+</section>
+
+<style>
+	.menu-section {
+		padding: 5rem 1.5rem;
+		background: #fdfaf5;
+	}
+
+	.container {
+		max-width: 1100px;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	h2 {
+		font-size: 2.25rem;
+		font-weight: 700;
+		color: var(--text-main);
+		margin-bottom: 0.5rem;
+	}
+
+	h2 span {
+		color: var(--accent-primary);
+	}
+
+	.subtitle {
+		color: #6b4d41;
+		margin-bottom: 3rem;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+		gap: 2rem;
+	}
+
+	.card {
+		background: #ffffff;
+		border: 1px solid var(--accent-soft);
+		border-radius: 16px;
+		padding: 2rem 1.5rem;
+		text-align: left;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		box-shadow: 0 4px 12px rgba(74, 44, 32, 0.04);
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.card:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 8px 20px rgba(74, 44, 32, 0.08);
+	}
+
+	.card-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
+	}
+
+	.badge {
+		background: var(--accent-soft);
+		color: var(--text-main);
+		font-size: 0.75rem;
+		font-weight: 600;
+		padding: 0.25rem 0.75rem;
+		border-radius: 12px;
+	}
+
+	.cookie-icon {
+		font-size: 2.5rem;
+	}
+
+	.card h3 {
+		font-size: 1.2rem;
+		color: var(--text-main);
+		margin-bottom: 0.5rem;
+	}
+
+	.desc {
+		font-size: 0.9rem;
+		color: #6b4d41;
+		line-height: 1.5;
+		margin-bottom: 1.5rem;
+	}
+
+	.card-footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-top: 1px solid #f4f1de;
+		padding-top: 1rem;
+	}
+
+	.price {
+		font-size: 1.2rem;
+		font-weight: 700;
+		color: var(--accent-primary);
+	}
+
+	.btn-card {
+		background: var(--text-main);
+		color: #ffffff;
+		padding: 0.4rem 1rem;
+		border-radius: 20px;
+		text-decoration: none;
+		font-size: 0.85rem;
+		font-weight: 600;
+		transition: opacity 0.2s;
+	}
+
+	.btn-card:hover {
+		opacity: 0.85;
+	}
+</style>
