@@ -1,23 +1,53 @@
-<!doctype html>
-<html lang="en">
+---
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { 
+	title = "CookiesByMinny | Galletas Artesanales & Repostería", 
+	description = "Galletas horneadas con los mejores ingredientes, sabor casero y diseños únicos." 
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<meta name="description" content={description} />
+		<title>{title}</title>
+
+		<!-- Tipografía Poppins desde Google Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 	</head>
 	<body>
 		<slot />
 	</body>
 </html>
 
-<style>
-	html,
-	body {
+<style is:global>
+	:root {
+		--bg-main: #fffcf8;        /* Crema / Vainilla suave */
+		--text-main: #4a2c20;      /* Marrón Chocolate Oscuro */
+		--accent-primary: #e07a5f; /* Terracota / Salmón cálido */
+		--accent-soft: #f4f1de;    /* Beige mantequilla */
+		--font-main: 'Poppins', sans-serif;
+	}
+	
+	* {
+		box-sizing: border-box;
 		margin: 0;
-		width: 100%;
-		height: 100%;
+		padding: 0;
+		font-family: inherit;
+	}
+
+	html, body {
+		font-family: var(--font-main);
+		background-color: var(--bg-main);
+		color: var(--text-main);
 	}
 </style>
