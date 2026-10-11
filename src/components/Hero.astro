@@ -1,0 +1,127 @@
+---
+import CookieArt from './CookieArt.astro';
+---
+
+<section id="inicio" class="hero">
+	<div class="wrap grid">
+		<div class="copy">
+			<span class="pill">Horneadas cada mañana</span>
+			<h1>Galletas que <em>se derriten</em> en cada mordida.</h1>
+			<p>
+				Masas suaves por dentro, doradas por fuera y hechas a mano con chocolate de verdad.
+				Arma tu pack, mezcla sabores y recíbelo en tu universidad.
+			</p>
+			<div class="actions">
+				<a href="/armar-pack" class="btn btn-primary">Armar mi pack</a>
+				<a href="/catalogo" class="btn btn-ghost">Ver catálogo</a>
+			</div>
+			<ul class="stats">
+				<li><strong>8</strong> sabores</li>
+				<li><strong>100%</strong> artesanal</li>
+				<li><strong>Hoy</strong> horneadas</li>
+			</ul>
+		</div>
+		<div class="art" aria-hidden="true">
+			<div class="blob"></div>
+			<div class="c c1"><CookieArt dough="#e2a85f" chips="#4a2a1a" size={300} /></div>
+			<div class="c c2"><CookieArt dough="#5a3425" chips="#f7ead2" chips2="#2e180f" size={180} /></div>
+			<div class="c c3"><CookieArt dough="#b3293f" chips="#fff3e0" size={150} /></div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.hero {
+		padding: 4rem 0 5rem;
+		overflow: hidden;
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: 1.1fr 1fr;
+		gap: 2rem;
+		align-items: center;
+	}
+	.pill {
+		display: inline-block;
+		background: var(--cream-dark);
+		padding: 0.35rem 1rem;
+		border-radius: 999px;
+		font-weight: 700;
+		font-size: 0.85rem;
+		margin-bottom: 1.2rem;
+	}
+	h1 {
+		font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+		font-weight: 800;
+		letter-spacing: -0.02em;
+	}
+	h1 em {
+		color: var(--caramel);
+	}
+	p {
+		margin: 1.3rem 0 2rem;
+		font-size: 1.15rem;
+		color: var(--choco-soft);
+		max-width: 30rem;
+	}
+	.actions {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+	.stats {
+		display: flex;
+		gap: 2rem;
+		list-style: none;
+		margin-top: 2.5rem;
+		color: var(--choco-soft);
+		flex-wrap: wrap;
+	}
+	.stats strong {
+		display: block;
+		font-family: var(--font-display);
+		font-size: 1.6rem;
+		color: var(--choco);
+	}
+	.art {
+		position: relative;
+		min-height: 420px;
+	}
+	.blob {
+		position: absolute;
+		inset: 5% 0 0 5%;
+		background: var(--cream-dark);
+		border-radius: 58% 42% 55% 45% / 50% 55% 45% 50%;
+	}
+	.c {
+		position: absolute;
+		filter: drop-shadow(0 12px 14px rgba(59, 34, 24, 0.2));
+		animation: float 6s ease-in-out infinite;
+	}
+	.c1 { top: 12%; left: 18%; }
+	.c2 { top: 0; right: 2%; animation-delay: -2s; transform: rotate(18deg); }
+	.c3 { bottom: 0; right: 14%; animation-delay: -4s; }
+	@keyframes float {
+		50% { translate: 0 -12px; }
+	}
+	@media (max-width: 860px) {
+		.hero { padding: 2.5rem 0 3.5rem; }
+		.grid { grid-template-columns: 1fr; }
+		.art { min-height: 340px; }
+		.c1 { left: 8%; }
+		.c1 :global(svg) { width: 240px; height: 240px; }
+		.c2 :global(svg) { width: 140px; height: 140px; }
+		.c3 :global(svg) { width: 120px; height: 120px; }
+	}
+	@media (max-width: 480px) {
+		.hero { padding: 1.8rem 0 3rem; }
+		p { font-size: 1.05rem; margin: 1rem 0 1.5rem; }
+		.actions .btn { flex: 1 1 100%; text-align: center; }
+		.stats { gap: 1.2rem; margin-top: 1.8rem; }
+		.art { min-height: 280px; }
+		.c1 { left: 4%; top: 14%; }
+		.c1 :global(svg) { width: 190px; height: 190px; }
+		.c2 :global(svg) { width: 110px; height: 110px; }
+		.c3 :global(svg) { width: 95px; height: 95px; }
+	}
+</style>

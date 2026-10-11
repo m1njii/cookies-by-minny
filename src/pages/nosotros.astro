@@ -1,0 +1,184 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Contact from '../components/Contact.astro';
+import { universities } from '../data/cookies';
+
+const steps = [
+	{ n: '01', title: 'Todo empezó en clase', text: 'Entre cursos y exámenes, nos juntamos a hornear por pura pasión. Las primeras galletas las vendimos a nuestros compañeros.' },
+	{ n: '02', title: 'Creciendo campus a campus', text: 'Hoy repartimos en UPN Chorrillos y en la Universidad Autónoma del Perú. Cada pedido nos impulsa a seguir.' },
+	{ n: '03', title: 'El gran sueño', text: 'Abrir nuestra propia cafetería: un lugar bonito, rico y acogedor donde pasar un buen momento.' },
+];
+const values = [
+	{ icon: '🧈', title: 'Ingredientes de calidad', text: 'Mantequilla real, buen chocolate y huevos frescos. Si no lo comeríamos nosotros, no lo horneamos.' },
+	{ icon: '🤲', title: 'Hecho a mano', text: 'Amasamos y horneamos en pequeños lotes para que cada galleta llegue suave y recién hecha.' },
+	{ icon: '💛', title: 'Más que vender', text: 'La repostería es nuestra forma de expresarnos y de regalar un momento de alegría.' },
+];
+---
+
+<Layout title="Nosotros | CookiesByMinny" description="Somos estudiantes con pasión por la repostería. Conoce nuestra historia y nuestro sueño de abrir una cafetería.">
+	<section class="page-hero">
+		<div class="wrap">
+			<h1>Hola, somos <em>CookiesByMinny</em></h1>
+			<p>Un grupo de estudiantes que hornea para compartir alegría, una galleta a la vez.</p>
+		</div>
+	</section>
+
+	<section class="story">
+		<div class="wrap narrow">
+			<p class="lead">
+				Somos estudiantes universitarios unidos por algo que nos encanta: la repostería. Para
+				nosotros es más que ganar unos soles; es una forma de expresarnos y de compartir alegría
+				en cada dulce.
+			</p>
+			<p>
+				Empezamos vendiendo en nuestras universidades, <strong>UPN Chorrillos</strong> y la
+				<strong>Universidad Autónoma del Perú</strong>, y cada venta nos acerca un paso más a lo
+				que soñamos: abrir una cafetería donde puedas disfrutar de un momento bonito, rico y
+				acogedor. Queremos llegar a más personas, con más productos, y seguir endulzando caminos.
+			</p>
+		</div>
+	</section>
+
+	<section class="path">
+		<div class="wrap">
+			<h2>Nuestro <em>camino</em></h2>
+			<ol>
+				{steps.map((s) => (
+					<li><span class="n">{s.n}</span><h3>{s.title}</h3><p>{s.text}</p></li>
+				))}
+			</ol>
+		</div>
+	</section>
+
+	<section class="values">
+		<div class="wrap">
+			<h2>Lo que nos <em>importa</em></h2>
+			<div class="grid">
+				{values.map((v) => (
+					<div class="v"><span>{v.icon}</span><h3>{v.title}</h3><p>{v.text}</p></div>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="where">
+		<div class="wrap">
+			<h2>¿Dónde nos encuentras?</h2>
+			<p>Hacemos entregas en:</p>
+			<div class="places">
+				{universities.map((u) => <span>📍 {u}</span>)}
+			</div>
+		</div>
+	</section>
+
+	<Contact />
+</Layout>
+
+<style>
+	.narrow {
+		max-width: 46rem;
+	}
+	.story p {
+		color: var(--choco-soft);
+		font-size: 1.1rem;
+		margin-bottom: 1.2rem;
+	}
+	.story .lead {
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		line-height: 1.4;
+		color: var(--choco);
+	}
+	h2 {
+		font-size: clamp(1.8rem, 4vw, 2.6rem);
+		font-weight: 800;
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+	h2 em {
+		color: var(--caramel);
+	}
+	.path {
+		padding: 4.5rem 0;
+	}
+	ol {
+		list-style: none;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 1.5rem;
+	}
+	ol li {
+		background: #fff;
+		border-radius: var(--radius);
+		padding: 1.8rem;
+	}
+	.n {
+		font-family: var(--font-display);
+		font-size: 2.4rem;
+		font-weight: 800;
+		color: var(--caramel);
+		line-height: 1;
+	}
+	h3 {
+		margin: 0.6rem 0 0.4rem;
+		font-size: 1.2rem;
+	}
+	li p,
+	.v p {
+		color: var(--choco-soft);
+	}
+	.values {
+		background: var(--choco);
+		color: var(--cream);
+		padding: 4.5rem 0;
+		border-radius: 48px;
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 1.5rem;
+	}
+	.v {
+		background: rgba(255, 255, 255, 0.07);
+		border-radius: var(--radius);
+		padding: 1.8rem;
+	}
+	.v span {
+		font-size: 2rem;
+	}
+	.values .v p {
+		color: var(--cream);
+		opacity: 0.8;
+	}
+	.where {
+		text-align: center;
+		padding: 4.5rem 0 1rem;
+	}
+	.where h2 {
+		margin-bottom: 0.6rem;
+	}
+	.where p {
+		color: var(--choco-soft);
+	}
+	.places {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+		margin-top: 1.2rem;
+	}
+	.places span {
+		background: #fff;
+		padding: 0.7rem 1.4rem;
+		border-radius: 999px;
+		font-weight: 700;
+	}
+	@media (max-width: 600px) {
+		.story .lead { font-size: 1.25rem; }
+		.path, .where { padding: 3rem 0 1rem; }
+		.values { padding: 3rem 0; border-radius: 32px; }
+		h2 { margin-bottom: 1.8rem; }
+		ol li, .v { padding: 1.3rem; }
+		.places span { width: 100%; text-align: center; }
+	}
+</style>

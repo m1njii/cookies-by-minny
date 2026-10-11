@@ -1,91 +1,56 @@
 ---
-const whatsappNumber = "51999999999"; // Reemplazar con el número real
-const defaultMessage = encodeURIComponent("¡Hola! Quisiera realizar un pedido de galletas.");
-const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${defaultMessage}`;
+import { whatsappPhone } from '../data/cookies';
+const url = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent('¡Hola! Quisiera realizar un pedido de galletas.')}`;
 ---
 
-<section id="contacto" class="contact-section">
-	<div class="container">
-		<div class="contact-card">
-			<h2>¿List@ para disfrutar de unas <span>galletas recién horneadas</span>?</h2>
-			<p>Hacemos envíos y pedidos personalizados para eventos, regalos y antojos diarios.</p>
-			
+<section class="contact">
+	<div class="wrap">
+		<div class="box">
+			<h2>¿Se te antojó? <em>Pide ahora.</em></h2>
+			<p>Arma tu pack en un minuto o escríbenos por WhatsApp para pedidos especiales.</p>
 			<div class="actions">
-				<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
-					Pedir por WhatsApp 💬
-				</a>
-				<a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn-instagram">
-					Síguenos en Instagram 📸
-				</a>
+				<a href="/armar-pack" class="btn btn-wa">Armar mi pack</a>
+				<a href={url} target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Escribir por WhatsApp</a>
 			</div>
 		</div>
 	</div>
 </section>
 
 <style>
-	.contact-section {
-		padding: 4rem 1.5rem;
-		background: var(--bg-main);
+	.contact {
+		padding: 4rem 0 5rem;
 	}
-
-	.container {
-		max-width: 900px;
-		margin: 0 auto;
-	}
-
-	.contact-card {
-		background: var(--accent-soft);
-		border-radius: 24px;
-		padding: 3.5rem 2rem;
+	.box {
+		background: var(--caramel);
+		color: var(--choco);
+		border-radius: 40px;
+		padding: clamp(2rem, 6vw, 4.5rem);
 		text-align: center;
-		border: 1px solid rgba(224, 122, 95, 0.2);
 	}
-
 	h2 {
-		font-size: 2rem;
-		color: var(--text-main);
-		margin-bottom: 1rem;
-		font-weight: 700;
+		font-size: clamp(2rem, 4vw, 3rem);
+		font-weight: 800;
 	}
-
-	h2 span {
-		color: var(--accent-primary);
+	h2 em {
+		color: #fff;
 	}
-
-	p {
-		color: #6b4d41;
+	.box p {
+		margin: 0.8rem 0 2rem;
 		font-size: 1.1rem;
-		margin-bottom: 2rem;
 	}
-
 	.actions {
 		display: flex;
 		gap: 1rem;
 		justify-content: center;
 		flex-wrap: wrap;
 	}
-
-	.btn-whatsapp {
-		background: #25d366;
-		color: #ffffff;
-		padding: 0.8rem 1.8rem;
-		border-radius: 30px;
-		text-decoration: none;
-		font-weight: 600;
-		transition: transform 0.2s;
+	.btn-wa {
+		background: var(--choco);
+		color: #fff;
 	}
-
-	.btn-instagram {
-		background: var(--text-main);
-		color: #ffffff;
-		padding: 0.8rem 1.8rem;
-		border-radius: 30px;
-		text-decoration: none;
-		font-weight: 600;
-		transition: transform 0.2s;
-	}
-
-	.btn-whatsapp:hover, .btn-instagram:hover {
-		transform: translateY(-2px);
+	@media (max-width: 600px) {
+		.contact { padding: 2.5rem 0 3.5rem; }
+		.box { border-radius: 28px; }
+		.actions .btn { flex: 1 1 100%; text-align: center; }
 	}
 </style>

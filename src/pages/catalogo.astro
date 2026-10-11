@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Catalog from '../components/Catalog.astro';
+import Contact from '../components/Contact.astro';
+---
+
+<Layout title="Catálogo | CookiesByMinny" description="Todas nuestras galletas artesanales: clásicas, rellenas y de chocolate.">
+	<section class="page-hero">
+		<div class="wrap">
+			<h1>Nuestro <em>catálogo</em></h1>
+			<p>Cada galleta es de unos 120 g. Mézclalas como quieras en un pack y ahorra.</p>
+		</div>
+	</section>
+	<Catalog />
+	<Contact />
+</Layout>

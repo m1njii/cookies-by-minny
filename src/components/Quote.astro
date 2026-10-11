@@ -1,0 +1,530 @@
+---
+import CookieArt from './CookieArt.astro';
+import { cookies, packs, universities, whatsappPhone, unitMax } from '../data/cookies';
+
+const config = {
+	phone: whatsappPhone,
+	unitMax,
+	packs: packs.map((p) => ({ size: p.size, discount: p.discount })),
+	cookies: cookies.map((c) => ({ id: c.id, name: c.name, price: c.price })),
+};
+---
+
+<section id="armar-pack" class="quote" data-config={JSON.stringify(config)}>
+	<div class="wrap">
+		<div class="layout">
+			<div class="steps">
+				<div class="step">
+					<h3><b>1</b> Elige el tamaño</h3>
+					<div class="sizes" role="radiogroup" aria-label="Tamaño del pack">
+						{packs.map((p, i) => (
+							<button type="button" class:list={['size', { active: i === 0 }]} data-size={p.size} role="radio" aria-checked={i === 0}>
+								<strong>{p.label}</strong>
+								<span>{Math.round(p.discount * 100)}% dto.</span>
+							</button>
+						))}
+						<button type="button" class="size" data-size="0" role="radio" aria-checked="false">
+							<strong>Por unidad</strong>
+							<span class="nodisc">Sin descuento</span>
+						</button>
+					</div>
+				</div>
+
+				<div class="step" id="sabores">
+					<h3><b>2</b> Elige tus sabores <small id="counter">0 / 3</small></h3>
+					<ul class="flavors">
+						{cookies.map((c) => (
+							<li class="flavor" data-id={c.id}>
+								<CookieArt dough={c.dough} chips={c.chips} chips2={c.chips2} size={52} />
+								<div class="info">
+									<strong>{c.name}</strong>
+									<span>S/ {c.price.toFixed(2)} c/u</span>
+								</div>
+								<div class="stepper">
+									<button type="button" data-dec aria-label={`Quitar ${c.name}`}>−</button>
+									<output data-qty>0</output>
+									<button type="button" data-inc aria-label={`Agregar ${c.name}`}>+</button>
+								</div>
+							</li>
+						))}
+					</ul>
+				</div>
+
+				<div class="step" id="datos">
+					<h3><b>3</b> Datos de entrega</h3>
+					<div class="fields">
+						<label>
+							Tu nombre
+							<input type="text" id="name" placeholder="Ej. María Pérez" autocomplete="name" required />
+						</label>
+						<label>
+							Universidad de entrega
+							<select id="uni" required>
+								<option value="" disabled selected>Selecciona una opción</option>
+								{universities.map((u) => <option value={u}>{u}</option>)}
+							</select>
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<aside class="summary" id="resumen" aria-live="polite">
+				<h3>Tu pedido</h3>
+				<ul id="lines" class="lines"><li class="empty">Aún no eliges galletas.</li></ul>
+				<dl>
+					<div><dt id="regular-label">Sueltas</dt><dd id="regular">S/ 0.00</dd></div>
+					<div class="save"><dt id="saving-label">Ahorro del pack</dt><dd id="saving">− S/ 0.00</dd></div>
+					<div class="total"><dt>Total</dt><dd id="total">S/ 0.00</dd></div>
+				</dl>
+				<p id="error" class="error" role="alert" hidden></p>
+				<button type="button" id="send" class="btn btn-primary">Enviar pedido por WhatsApp</button>
+			</aside>
+		</div>
+	</div>
+
+	<div class="mobile-bar" id="mbar" aria-hidden="true">
+		<div class="mb-info"><small id="mb-count">0 galletas</small><strong id="mb-total">S/ 0.00</strong></div>
+		<button type="button" id="mb-btn" class="btn" tabindex="-1">Elige tus galletas</button>
+	</div>
+</section>
+
+<script>
+	const root = document.getElementById('armar-pack')!;
+	const cfg = JSON.parse(root.dataset.config!) as {
+		phone: string;
+		unitMax: number;
+		packs: { size: number; discount: number }[];
+		cookies: { id: string; name: string; price: number }[];
+	};
+
+	// Todo en céntimos para evitar errores de decimales.
+	const cents = (n: number) => Math.round(n * 100);
+	const fmt = (c: number) => `S/ ${(c / 100).toFixed(2)}`;
+
+	// size = 0 significa "por unidad" (sin descuento, cantidad libre hasta unitMax).
+	let size = cfg.packs[0].size;
+	const isUnit = () => size === 0;
+	const limit = () => (isUnit() ? cfg.unitMax : size);
+	const qty: Record<string, number> = Object.fromEntries(cfg.cookies.map((c) => [c.id, 0]));
+	const total = () => Object.values(qty).reduce((a, b) => a + b, 0);
+	const complete = () => (isUnit() ? total() >= 1 : total() === size);
+
+	const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+	const errorEl = $('#error');
+
+	function price() {
+		const regular = cfg.cookies.reduce((s, c) => s + cents(c.price) * qty[c.id], 0);
+		if (isUnit() || total() !== size) return { regular, final: regular, saving: 0 };
+		const discount = cfg.packs.find((p) => p.size === size)!.discount;
+		// Se redondea al décimo de sol (S/ 21.00 -> S/ 18.90).
+		const final = Math.round((regular * (1 - discount)) / 10) * 10;
+		return { regular, final, saving: regular - final };
+	}
+
+	function render() {
+		const n = total();
+		$('#counter').textContent = isUnit() ? `${n} (máx. ${limit()})` : `${n} / ${size}`;
+		root.querySelectorAll<HTMLElement>('.flavor').forEach((li) => {
+			const id = li.dataset.id!;
+			li.querySelector('[data-qty]')!.textContent = String(qty[id]);
+			li.querySelector<HTMLButtonElement>('[data-dec]')!.disabled = qty[id] === 0;
+			li.querySelector<HTMLButtonElement>('[data-inc]')!.disabled = n >= limit();
+			li.classList.toggle('on', qty[id] > 0);
+		});
+
+		const lines = cfg.cookies.filter((c) => qty[c.id] > 0);
+		$('#lines').innerHTML = lines.length
+			? lines.map((c) => `<li><span>${qty[c.id]} × ${c.name}</span><span>${fmt(cents(c.price) * qty[c.id])}</span></li>`).join('')
+			: '<li class="empty">Aún no eliges galletas.</li>';
+
+		const { regular, final, saving } = price();
+		$('#saving-label').textContent = isUnit() ? 'Ahorro' : 'Ahorro del pack';
+		$('#regular-label').textContent = isUnit() ? 'Subtotal' : 'Sueltas';
+		$('#regular').textContent = fmt(regular);
+		$('#saving').textContent = isUnit()
+			? 'Sin descuento por unidad'
+			: n === size ? `− ${fmt(saving)}` : `Completa las ${size} galletas`;
+		$('#total').textContent = fmt(final);
+		if (complete()) errorEl.hidden = true;
+		updateBar();
+	}
+
+	root.querySelectorAll<HTMLButtonElement>('.size').forEach((btn) =>
+		btn.addEventListener('click', () => {
+			size = Number(btn.dataset.size);
+			root.querySelectorAll('.size').forEach((b) => {
+				b.classList.toggle('active', b === btn);
+				b.setAttribute('aria-checked', String(b === btn));
+			});
+			// Si el nuevo límite es menor, recorta el exceso.
+			let extra = total() - limit();
+			for (const c of [...cfg.cookies].reverse()) {
+				while (extra > 0 && qty[c.id] > 0) { qty[c.id]--; extra--; }
+			}
+			render();
+		}),
+	);
+
+	root.querySelectorAll<HTMLElement>('.flavor').forEach((li) => {
+		const id = li.dataset.id!;
+		li.querySelector('[data-inc]')!.addEventListener('click', () => { if (total() < limit()) { qty[id]++; render(); } });
+		li.querySelector('[data-dec]')!.addEventListener('click', () => { if (qty[id] > 0) { qty[id]--; render(); } });
+	});
+
+	// Viene desde el catalogo: /armar-pack?add=id
+	const addId = new URLSearchParams(location.search).get('add');
+	if (addId && addId in qty) qty[addId]++;
+
+	function fail(msg: string) {
+		errorEl.textContent = msg;
+		errorEl.hidden = false;
+	}
+
+	$('#send').addEventListener('click', () => {
+		const name = $<HTMLInputElement>('#name').value.trim();
+		const uni = $<HTMLSelectElement>('#uni').value;
+		if (isUnit() && total() < 1) return fail('Elige al menos 1 galleta.');
+		if (!isUnit() && total() !== size) return fail(`Elige exactamente ${size} galletas (llevas ${total()}).`);
+		if (!name) return fail('Escribe tu nombre.');
+		if (!uni) return fail('Selecciona tu universidad de entrega.');
+
+		const { regular, final, saving } = price();
+		const items = cfg.cookies.filter((c) => qty[c.id] > 0).map((c) => `• ${qty[c.id]} × ${c.name}`).join('\n');
+		const head = isUnit() ? `Quiero pedir *${total()} galleta(s) por unidad*:` : `Quiero un *Pack de ${size}* galletas:`;
+		const totalLine = isUnit()
+			? `Total: *${fmt(final)}*`
+			: `Total: *${fmt(final)}* (ahorro ${fmt(saving)} vs ${fmt(regular)} sueltas)`;
+		const msg = `¡Hola! Soy ${name}.\n${head}\n${items}\n\n${totalLine}\nEntrega en: ${uni}`;
+		window.open(`https://wa.me/${cfg.phone}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+	});
+
+// ---------- Barra fija inferior (móvil) ----------
+	const bar = $('#mbar');
+	const mbBtn = $<HTMLButtonElement>('#mb-btn');
+	let summaryVisible = false;
+
+	function updateBar() {
+		const n = total();
+		const { final } = price();
+		$('#mb-count').textContent = isUnit() ? `${n} galleta${n === 1 ? '' : 's'}` : `${n} / ${size} galletas`;
+		$('#mb-total').textContent = fmt(final);
+		const filled = $<HTMLInputElement>('#name').value.trim() && $<HTMLSelectElement>('#uni').value;
+		mbBtn.textContent = !complete()
+			? isUnit() ? 'Elige tus galletas' : `Faltan ${size - n}`
+			: !filled ? 'Tus datos' : 'Enviar pedido';
+		const show = n > 0 && !summaryVisible;
+		bar.classList.toggle('show', show);
+		bar.setAttribute('aria-hidden', String(!show));
+		mbBtn.tabIndex = show ? 0 : -1;
+	}
+
+	mbBtn.addEventListener('click', () => {
+		const name = $<HTMLInputElement>('#name');
+		const uni = $<HTMLSelectElement>('#uni');
+		if (!complete()) return $('#sabores').scrollIntoView({ behavior: 'smooth' });
+		if (!name.value.trim() || !uni.value) {
+			$('#datos').scrollIntoView({ behavior: 'smooth', block: 'center' });
+			return (name.value.trim() ? uni : name).focus({ preventScroll: true });
+		}
+		$('#send').click();
+		$('#resumen').scrollIntoView({ behavior: 'smooth', block: 'center' });
+	});
+	$('#name').addEventListener('input', updateBar);
+	$('#uni').addEventListener('change', updateBar);
+
+	new IntersectionObserver(([entry]) => {
+		summaryVisible = entry.isIntersecting;
+		updateBar();
+	}).observe($('#resumen'));
+
+	render();
+</script>
+
+<style>
+	.quote {
+		padding: 5rem 0;
+		background: var(--cream);
+	}
+	.head {
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+	h2 {
+		font-size: clamp(2rem, 4vw, 3rem);
+		font-weight: 800;
+	}
+	h2 em {
+		color: var(--caramel);
+	}
+	.head p {
+		color: var(--choco-soft);
+		margin-top: 0.6rem;
+	}
+	.layout {
+		display: grid;
+		grid-template-columns: 1.5fr 1fr;
+		gap: 2rem;
+		align-items: start;
+	}
+	.step {
+		background: #fff;
+		border-radius: var(--radius);
+		padding: 1.5rem;
+		margin-bottom: 1.2rem;
+	}
+	.step h3 {
+		font-size: 1.15rem;
+		margin-bottom: 1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+	.step h3 b {
+		display: grid;
+		place-items: center;
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
+		background: var(--caramel);
+		color: #fff;
+		font-size: 0.9rem;
+	}
+	.step h3 small {
+		margin-left: auto;
+		font-family: var(--font-body);
+		color: var(--choco-soft);
+	}
+	.sizes {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+		gap: 0.8rem;
+	}
+	.size {
+		font: inherit;
+		cursor: pointer;
+		border: 2px solid var(--cream-dark);
+		background: var(--cream);
+		border-radius: 18px;
+		padding: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		color: var(--choco);
+		transition: all 0.2s;
+	}
+	.size strong {
+		font-family: var(--font-display);
+		font-size: 1.3rem;
+	}
+	.size span {
+		font-size: 0.85rem;
+		color: var(--berry);
+		font-weight: 700;
+	}
+	.size .nodisc {
+		color: var(--choco-soft);
+	}
+	.size.active {
+		border-color: var(--choco);
+		background: #fff;
+		box-shadow: 0 6px 16px rgba(59, 34, 24, 0.15);
+	}
+	.flavors {
+		list-style: none;
+		display: grid;
+		gap: 0.6rem;
+	}
+	.flavor {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+		padding: 0.5rem 0.8rem;
+		border-radius: 16px;
+		border: 2px solid transparent;
+		background: var(--cream);
+	}
+	.flavor.on {
+		border-color: var(--caramel);
+	}
+	.info {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		line-height: 1.3;
+	}
+	.info span {
+		font-size: 0.85rem;
+		color: var(--choco-soft);
+	}
+	.stepper {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+	.stepper button {
+		width: 34px;
+		height: 34px;
+		border-radius: 50%;
+		border: none;
+		background: var(--choco);
+		color: var(--cream);
+		font-size: 1.2rem;
+		cursor: pointer;
+	}
+	.stepper button:disabled {
+		opacity: 0.25;
+		cursor: not-allowed;
+	}
+	.stepper output {
+		min-width: 1.2rem;
+		text-align: center;
+		font-weight: 700;
+	}
+	.fields {
+		display: grid;
+		gap: 1rem;
+	}
+	label {
+		display: grid;
+		gap: 0.35rem;
+		font-weight: 700;
+		font-size: 0.9rem;
+	}
+	input,
+	select {
+		font: inherit;
+		padding: 0.75rem 1rem;
+		border-radius: 14px;
+		border: 2px solid var(--cream-dark);
+		background: var(--cream);
+		color: var(--choco);
+	}
+	input:focus,
+	select:focus {
+		outline: none;
+		border-color: var(--caramel);
+	}
+	.summary {
+		position: sticky;
+		top: 90px;
+		background: var(--choco);
+		color: var(--cream);
+		border-radius: var(--radius);
+		padding: 1.8rem;
+	}
+	.summary h3 {
+		margin-bottom: 1rem;
+	}
+	.lines {
+		list-style: none;
+		display: grid;
+		gap: 0.5rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px dashed rgba(255, 248, 238, 0.3);
+		font-size: 0.95rem;
+	}
+	.lines :global(li) {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+	.lines :global(.empty) {
+		opacity: 0.6;
+	}
+	dl {
+		margin: 1rem 0;
+		display: grid;
+		gap: 0.4rem;
+	}
+	dl div {
+		display: flex;
+		justify-content: space-between;
+	}
+	.save {
+		color: #ffc58a;
+	}
+	.total {
+		font-family: var(--font-display);
+		font-size: 1.6rem;
+		font-weight: 800;
+		margin-top: 0.4rem;
+	}
+	.error {
+		background: rgba(194, 65, 93, 0.25);
+		padding: 0.6rem 0.9rem;
+		border-radius: 12px;
+		margin-bottom: 1rem;
+		font-size: 0.9rem;
+	}
+	.summary .btn {
+		width: 100%;
+		background: var(--caramel);
+		color: var(--choco);
+		box-shadow: none;
+	}
+	@media (max-width: 860px) {
+		.layout {
+			grid-template-columns: 1fr;
+		}
+		.summary {
+			position: static;
+		}
+	}
+	@media (max-width: 600px) {
+		.quote { padding: 2rem 0 3rem; }
+		.step { padding: 1.1rem; border-radius: 20px; }
+		.step h3 { font-size: 1.05rem; }
+		.flavor { gap: 0.6rem; padding: 0.5rem; }
+		.flavor :global(svg) { width: 40px; height: 40px; flex-shrink: 0; }
+		.info strong { font-size: 0.95rem; }
+		.stepper { gap: 0.4rem; }
+		.stepper button { width: 40px; height: 40px; }
+		.summary { padding: 1.3rem; border-radius: 20px; }
+		.total { font-size: 1.4rem; }
+		.size { padding: 0.8rem; }
+	}
+	.mobile-bar {
+		display: none;
+	}
+	@media (max-width: 860px) {
+		.mobile-bar {
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 55;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1rem;
+			padding: 0.8rem 1.1rem calc(0.8rem + env(safe-area-inset-bottom));
+			background: var(--choco);
+			color: var(--cream);
+			border-radius: 22px 22px 0 0;
+			box-shadow: 0 -10px 30px rgba(59, 34, 24, 0.25);
+			transform: translateY(110%);
+			transition: transform 0.35s ease;
+		}
+		.mobile-bar.show {
+			transform: none;
+		}
+		.mb-info {
+			display: flex;
+			flex-direction: column;
+			line-height: 1.2;
+		}
+		.mb-info small {
+			opacity: 0.75;
+			font-size: 0.8rem;
+		}
+		.mb-info strong {
+			font-family: var(--font-display);
+			font-size: 1.4rem;
+		}
+		#mb-btn {
+			background: var(--caramel);
+			color: var(--choco);
+			padding: 0.7rem 1.3rem;
+		}
+	}
+</style>

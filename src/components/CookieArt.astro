@@ -1,0 +1,29 @@
+---
+interface Props {
+	dough: string;
+	chips: string;
+	chips2?: string;
+	size?: number;
+}
+const { dough, chips, chips2 = chips, size = 200 } = Astro.props;
+const spots = [
+	[70, 75, 11], [118, 60, 9], [140, 105, 12], [95, 112, 10], [60, 130, 9],
+	[120, 145, 11], [88, 160, 8], [150, 70, 7], [45, 95, 7], [105, 90, 7],
+];
+---
+
+<svg viewBox="0 0 200 200" width={size} height={size} role="img" aria-hidden="true">
+	<ellipse cx="100" cy="182" rx="68" ry="9" fill="rgba(59,34,24,.15)"></ellipse>
+	<path
+		d="M100 14c20 0 30 10 48 16s28 22 30 42c2 18 12 28 8 48s-18 30-34 42-34 22-52 18-34-12-48-30S8 140 12 112 8 70 28 46 76 14 100 14z"
+		fill={dough}></path>
+	<path
+		d="M100 14c20 0 30 10 48 16s28 22 30 42"
+		fill="none"
+		stroke="rgba(255,255,255,.35)"
+		stroke-width="5"
+		stroke-linecap="round"></path>
+	{spots.map(([x, y, r], i) => (
+		<ellipse cx={x} cy={y} rx={r} ry={r * 0.78} fill={i % 3 === 0 ? chips2 : chips} transform={`rotate(${i * 37} ${x} ${y})`}></ellipse>
+	))}
+</svg>

@@ -1,89 +1,209 @@
 ---
-const navLinks = [
-	{ name: "Inicio", href: "#inicio" },
-	{ name: "Menú", href: "#menu" },
-	{ name: "Nosotros", href: "#nosotros" },
-	{ name: "Contacto", href: "#contacto" },
+const { pathname } = Astro.url;
+const links = [
+	{ name: 'Inicio', href: '/' },
+	{ name: 'Catálogo', href: '/catalogo' },
+	{ name: 'Armar pack', href: '/armar-pack' },
+	{ name: 'Nosotros', href: '/nosotros' },
 ];
+const active = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 ---
 
-<header class="header">
-	<div class="container">
-		<a href="/" class="logo">
-			CookiesByMinny<span>.</span>
-		</a>
+<header class="header" id="site-header">
+	<div class="wrap bar">
+		<a href="/" class="logo">Cookies<span>by</span>Minny</a>
 
-		<nav>
-			<ul>
-				{navLinks.map((link) => (
-					<li><a href={link.href}>{link.name}</a></li>
-				))}
-			</ul>
+		<nav id="site-nav" aria-label="Principal">
+			<div class="panel">
+				<ul>
+					{links.map((l, i) => (
+						<li style={`--i:${i}`}>
+							<a href={l.href} aria-current={active(l.href) ? 'page' : undefined}>{l.name}</a>
+						</li>
+					))}
+					<li class="mobile-cta" style={`--i:${links.length}`}>
+						<a href="/armar-pack" class="btn btn-primary">Hacer mi pedido</a>
+					</li>
+				</ul>
+			</div>
 		</nav>
 
-		<a href="#contacto" class="btn-order">Hacer Pedido 🍪</a>
+		<a href="/armar-pack" class="btn btn-primary cta">Pedir</a>
+
+		<button type="button" class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-nav">
+			<span></span><span></span><span></span>
+		</button>
 	</div>
 </header>
+
+<script>
+	const header = document.getElementById('site-header')!;
+	const burger = document.getElementById('burger')!;
+
+	function setOpen(open: boolean) {
+		header.classList.toggle('open', open);
+		burger.setAttribute('aria-expanded', String(open));
+		burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+		document.body.classList.toggle('menu-open', open);
+	}
+
+	burger.addEventListener('click', () => setOpen(!header.classList.contains('open')));
+	header.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+	document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+	document.addEventListener('click', (e) => {
+		if (!header.contains(e.target as Node)) setOpen(false);
+	});
+	window.matchMedia('(min-width: 721px)').addEventListener('change', () => setOpen(false));
+</script>
 
 <style>
 	.header {
 		position: sticky;
 		top: 0;
-		z-index: 100;
-		background: rgba(255, 252, 248, 0.9);
-		backdrop-filter: blur(8px);
-		border-bottom: 1px solid var(--accent-soft);
+		z-index: 60;
+		background: rgba(255, 248, 238, 0.92);
+		backdrop-filter: blur(10px);
+		border-bottom: 1px solid var(--cream-dark);
 	}
-
-	.container {
-		max-width: 1100px;
-		margin: 0 auto;
-		padding: 1.2rem 1.5rem;
+	.bar {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		height: 68px;
+		gap: 1rem;
 	}
-
 	.logo {
-		font-size: 1.5rem;
-		font-weight: 700;
-		color: var(--text-main);
+		font-family: var(--font-display);
+		font-weight: 800;
+		font-size: 1.4rem;
 		text-decoration: none;
 	}
-
 	.logo span {
-		color: var(--accent-primary);
+		color: var(--caramel);
+		font-style: italic;
+		padding: 0 0.1em;
 	}
-
-	nav ul {
+	ul {
 		display: flex;
 		gap: 2rem;
 		list-style: none;
 	}
-
-	nav a {
-		text-decoration: none;
-		color: var(--text-main);
-		font-weight: 500;
-		transition: color 0.2s;
-	}
-
-	nav a:hover {
-		color: var(--accent-primary);
-	}
-
-	.btn-order {
-		background: var(--accent-primary);
-		color: #ffffff;
-		padding: 0.6rem 1.4rem;
-		border-radius: 50px;
+	nav a:not(.btn) {
 		text-decoration: none;
 		font-weight: 600;
-		transition: transform 0.2s, opacity 0.2s;
+		padding-bottom: 2px;
+		border-bottom: 2px solid transparent;
+		transition: color 0.2s, border-color 0.2s;
+	}
+	nav a:not(.btn):hover {
+		color: var(--caramel);
+	}
+	nav a[aria-current='page'] {
+		border-color: var(--caramel);
+	}
+	.cta {
+		padding: 0.55rem 1.4rem;
+	}
+	button.burger,
+	nav ul li.mobile-cta {
+		display: none !important;
 	}
 
-	.btn-order:hover {
-		opacity: 0.9;
-		transform: scale(1.03);
+	/* ---------- Móvil: menú desplegable animado ---------- */
+	@media (max-width: 720px) {
+		.cta {
+			display: none;
+		}
+		button.burger {
+			display: flex !important;
+			flex-direction: column;
+			justify-content: center;
+			gap: 5px;
+			width: 44px;
+			height: 44px;
+			padding: 0 11px;
+			background: var(--cream-dark);
+			border: none;
+			border-radius: 14px;
+			cursor: pointer;
+		}
+		.burger span {
+			display: block;
+			height: 2.5px;
+			border-radius: 2px;
+			background: var(--choco);
+			transition: transform 0.3s ease, opacity 0.2s ease;
+		}
+		.open .burger span:nth-child(1) {
+			transform: translateY(7.5px) rotate(45deg);
+		}
+		.open .burger span:nth-child(2) {
+			opacity: 0;
+			transform: scaleX(0);
+		}
+		.open .burger span:nth-child(3) {
+			transform: translateY(-7.5px) rotate(-45deg);
+		}
+
+		nav {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			display: grid;
+			grid-template-rows: 0fr;
+			background: var(--cream);
+			border-bottom: 1px solid var(--cream-dark);
+			box-shadow: 0 18px 30px rgba(59, 34, 24, 0.12);
+			visibility: hidden;
+			transition: grid-template-rows 0.35s ease, visibility 0s linear 0.35s;
+		}
+		.open nav {
+			grid-template-rows: 1fr;
+			visibility: visible;
+			transition: grid-template-rows 0.35s ease, visibility 0s;
+		}
+		.panel {
+			overflow: hidden;
+		}
+		ul {
+			flex-direction: column;
+			gap: 0;
+			padding: 0.5rem 1.1rem 1.4rem;
+		}
+		li {
+			opacity: 0;
+			transform: translateY(-8px);
+			transition: opacity 0.3s ease, transform 0.3s ease;
+		}
+		.open li {
+			opacity: 1;
+			transform: none;
+			transition-delay: calc(0.08s * var(--i) + 0.1s);
+		}
+		li:not(.mobile-cta) a {
+			display: block;
+			padding: 0.9rem 0;
+			font-size: 1.15rem;
+			border-bottom: 1px solid var(--cream-dark) !important;
+		}
+		li a[aria-current='page'] {
+			color: var(--caramel);
+		}
+		nav ul li.mobile-cta {
+			display: block !important;
+			padding-top: 1rem;
+		}
+		.mobile-cta .btn {
+			display: block;
+			text-align: center;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		nav,
+		li,
+		.burger span {
+			transition: none !important;
+		}
 	}
 </style>

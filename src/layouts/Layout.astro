@@ -1,90 +1,150 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import Menu from '../components/Menu.astro';
-import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+const {
+	title,
+	description = 'Galletas artesanales hechas por estudiantes. Mira el catálogo, arma tu pack y pide con entrega en tu universidad.',
+} = Astro.props;
 ---
 
-<Layout title="CookiesByMinny | Galletas Artesanales">
-	<Header />
-	
-	<main class="hero">
-		<div class="hero-content">
-			<span class="badge">Horneadas diariamente ✨</span>
-			<h1>Galletas artesanales hechas con <span>amor y chocolate real</span>.</h1>
-			<p>Descubre combinaciones únicas, texturas suaves por dentro y crujientes por fuera.</p>
-			<div class="hero-buttons">
-				<a href="#menu" class="btn-primary">Ver Menú</a>
-				<a href="#contacto" class="btn-secondary">Pedir por WhatsApp</a>
-			</div>
-		</div>
-	</main>
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#3b2218" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<title>{title}</title>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>
 
-	<!-- Menú de productos -->
-	<Menu />
-
-	<!-- Sección de Contacto -->
-	<Contact />
-</Layout>
-
-<style>
-	.hero {
-		max-width: 900px;
-		margin: 4rem auto;
+<style is:global>
+	:root {
+		--cream: #fff8ee;
+		--cream-dark: #f7e9d3;
+		--choco: #3b2218;
+		--choco-soft: #6b4d41;
+		--caramel: #d98a3d;
+		--berry: #c2415d;
+		--radius: 24px;
+		--font-display: 'Fraunces', Georgia, serif;
+		--font-body: 'Nunito', system-ui, sans-serif;
+	}
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+	}
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: 80px;
+	}
+	body {
+		font-family: var(--font-body);
+		background: var(--cream);
+		color: var(--choco);
+		line-height: 1.6;
+		-webkit-font-smoothing: antialiased;
+	}
+	h1,
+	h2,
+	h3 {
+		font-family: var(--font-display);
+		line-height: 1.15;
+	}
+	a {
+		color: inherit;
+	}
+	.wrap {
+		max-width: 1140px;
+		margin: 0 auto;
 		padding: 0 1.5rem;
-		text-align: center;
 	}
-
-	.badge {
+	.btn {
 		display: inline-block;
-		background: var(--accent-soft);
-		color: var(--text-main);
-		padding: 0.4rem 1rem;
-		border-radius: 20px;
-		font-size: 0.9rem;
-		font-weight: 600;
-		margin-bottom: 1.5rem;
-	}
-
-	.hero h1 {
-		font-size: 3rem;
-		line-height: 1.2;
-		margin-bottom: 1.5rem;
+		padding: 0.85rem 1.8rem;
+		border-radius: 999px;
 		font-weight: 700;
+		text-decoration: none;
+		border: 2px solid transparent;
+		cursor: pointer;
+		font-family: inherit;
+		font-size: 1rem;
+		transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 	}
-
-	.hero h1 span {
-		color: var(--accent-primary);
+	.btn:hover {
+		transform: translateY(-2px);
 	}
-
-	.hero p {
-		font-size: 1.2rem;
-		color: #6b4d41;
-		max-width: 600px;
-		margin: 0 auto 2.5rem;
-	}
-
-	.hero-buttons {
-		display: flex;
-		gap: 1rem;
-		justify-content: center;
-	}
-
 	.btn-primary {
-		background: var(--accent-primary);
-		color: #fff;
-		padding: 0.8rem 2rem;
-		border-radius: 30px;
-		text-decoration: none;
-		font-weight: 600;
+		background: var(--choco);
+		color: var(--cream);
+		box-shadow: 0 8px 20px rgba(59, 34, 24, 0.25);
 	}
-
-	.btn-secondary {
-		background: var(--accent-soft);
-		color: var(--text-main);
-		padding: 0.8rem 2rem;
-		border-radius: 30px;
-		text-decoration: none;
-		font-weight: 600;
+	.btn-ghost {
+		border-color: var(--choco);
+		color: var(--choco);
+	}
+	.btn-ghost:hover {
+		background: var(--choco);
+		color: var(--cream);
+	}
+	.page-hero {
+		text-align: center;
+		padding: 4rem 0 3rem;
+	}
+	.page-hero h1 {
+		font-size: clamp(2.2rem, 5vw, 3.6rem);
+		font-weight: 800;
+		letter-spacing: -0.02em;
+	}
+	.page-hero h1 em {
+		color: var(--caramel);
+	}
+	.page-hero p {
+		color: var(--choco-soft);
+		font-size: 1.15rem;
+		max-width: 36rem;
+		margin: 1rem auto 0;
+	}
+	@media (max-width: 600px) {
+		.wrap {
+			padding: 0 1.1rem;
+		}
+		.page-hero {
+			padding: 2.5rem 0 2rem;
+		}
+		.page-hero p {
+			font-size: 1.05rem;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+		* {
+			transition: none !important;
+			animation: none !important;
+		}
 	}
 </style>

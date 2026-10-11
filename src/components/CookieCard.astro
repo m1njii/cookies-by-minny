@@ -1,0 +1,95 @@
+---
+import CookieArt from './CookieArt.astro';
+import { formatPrice, type Cookie } from '../data/cookies';
+
+interface Props {
+	cookie: Cookie;
+}
+const { cookie: c } = Astro.props;
+---
+
+<article class="card" data-category={c.category}>
+	{c.tag && <span class="tag">{c.tag}</span>}
+	<div class="thumb">
+		<CookieArt dough={c.dough} chips={c.chips} chips2={c.chips2} size={170} />
+	</div>
+	<span class="cat">{c.category}</span>
+	<h3>{c.name}</h3>
+	<p>{c.description}</p>
+	<div class="foot">
+		<strong>{formatPrice(c.price)}</strong>
+		<a href={`/armar-pack?add=${c.id}`} class="btn btn-primary add">+ Al pack</a>
+	</div>
+</article>
+
+<style>
+	.card {
+		position: relative;
+		background: var(--cream);
+		border-radius: var(--radius);
+		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		transition: transform 0.25s, box-shadow 0.25s;
+	}
+	.card[hidden] {
+		display: none;
+	}
+	.card:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 18px 30px rgba(59, 34, 24, 0.12);
+	}
+	.tag {
+		position: absolute;
+		top: 1rem;
+		left: 1rem;
+		background: var(--berry);
+		color: #fff;
+		font-size: 0.75rem;
+		font-weight: 700;
+		padding: 0.2rem 0.7rem;
+		border-radius: 999px;
+	}
+	.thumb {
+		display: grid;
+		place-items: center;
+		margin-bottom: 0.8rem;
+		transition: transform 0.4s;
+	}
+	.card:hover .thumb {
+		transform: rotate(-8deg) scale(1.05);
+	}
+	.cat {
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--caramel);
+	}
+	h3 {
+		font-size: 1.25rem;
+		margin: 0.2rem 0 0.5rem;
+	}
+	p {
+		color: var(--choco-soft);
+		font-size: 0.95rem;
+		flex: 1;
+	}
+	.foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 1.2rem;
+	}
+	.foot strong {
+		font-family: var(--font-display);
+		font-size: 1.3rem;
+	}
+	.add {
+		padding: 0.5rem 1.3rem;
+	}
+	@media (max-width: 480px) {
+		.card { padding: 1.2rem; }
+		.add { padding: 0.6rem 1.2rem; }
+	}
+</style>

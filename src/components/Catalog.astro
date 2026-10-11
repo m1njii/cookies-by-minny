@@ -1,0 +1,81 @@
+---
+import CookieCard from './CookieCard.astro';
+import { cookies, categories } from '../data/cookies';
+---
+
+<section class="catalog">
+	<div class="wrap">
+		<div class="filters" role="group" aria-label="Filtrar por categoría">
+			{categories.map((c, i) => (
+				<button type="button" class:list={['chip', { active: i === 0 }]} data-filter={c} aria-pressed={i === 0}>
+					{c}
+				</button>
+			))}
+		</div>
+		<div class="products">
+			{cookies.map((c) => <CookieCard cookie={c} />)}
+		</div>
+	</div>
+</section>
+
+<script>
+	const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+	const cards = document.querySelectorAll<HTMLElement>('.card');
+	chips.forEach((chip) =>
+		chip.addEventListener('click', () => {
+			const f = chip.dataset.filter;
+			chips.forEach((c) => {
+				const on = c === chip;
+				c.classList.toggle('active', on);
+				c.setAttribute('aria-pressed', String(on));
+			});
+			cards.forEach((card) => {
+				card.hidden = f !== 'Todas' && card.dataset.category !== f;
+			});
+		}),
+	);
+</script>
+
+<style>
+	.catalog {
+		background: #fff;
+		padding: 3.5rem 0 5rem;
+		border-radius: 48px 48px 0 0;
+	}
+	.filters {
+		display: flex;
+		gap: 0.6rem;
+		justify-content: center;
+		flex-wrap: wrap;
+		margin-bottom: 2.5rem;
+	}
+	.chip {
+		font: inherit;
+		font-weight: 700;
+		padding: 0.5rem 1.3rem;
+		border-radius: 999px;
+		border: 2px solid var(--cream-dark);
+		background: transparent;
+		color: var(--choco);
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+	.chip:hover {
+		border-color: var(--caramel);
+	}
+	.chip.active {
+		background: var(--choco);
+		border-color: var(--choco);
+		color: var(--cream);
+	}
+	.products {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+		gap: 1.5rem;
+	}
+	@media (max-width: 600px) {
+		.catalog { padding: 2.5rem 0 3.5rem; border-radius: 32px 32px 0 0; }
+		.filters { margin-bottom: 1.8rem; gap: 0.5rem; }
+		.chip { padding: 0.45rem 1rem; font-size: 0.95rem; }
+	}
+</style>
