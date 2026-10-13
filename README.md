@@ -1,46 +1,42 @@
-# Astro Starter Kit: Basics
+# 🍪 CookiesByMinny - Web y Catálogo
 
-```sh
-npm create astro@latest -- --template basics
-```
+Este es el repositorio principal para el sitio web de **CookiesByMinny**, desarrollado para presentar una landing page atractiva y un menú de catálogo interactivo con los productos de repostería.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+El proyecto está construido utilizando [Astro](https://astro.build), aprovechando su rendimiento y flexibilidad.
 
-## 🚀 Project Structure
+## 🚀 Tecnologías Principales
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Framework:** Astro
+- **Estructura y Estilos:** HTML, CSS
+- **Gestor de Paquetes:** npm
+
+## 📁 Estructura del Proyecto
+
+Dentro del repositorio, la estructura principal es la siguiente:
 
 ```text
 /
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+├── public/           # Recursos estáticos (imágenes de los postres, logos, favicon)
+├── src/
+│   ├── assets/       # Recursos procesados por Astro (optimizaciones)
+│   ├── components/   # Componentes reutilizables (tarjetas de galletas, navbar, footer)
+│   ├── layouts/      # Plantilla principal de la página
+│   └── pages/        # Páginas del sitio (ej. index.astro para la landing y catalog.astro para el menú)
+└── package.json      # Dependencias y scripts del proyecto
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## 🧞 Comandos de Desarrollo
 
-## 🧞 Commands
+Para levantar el proyecto en tu entorno local, asegúrate de tener Node.js instalado y ejecuta los siguientes comandos desde la raíz del proyecto en tu terminal:
 
-All commands are run from the root of the project, from a terminal:
+| Command                   | Action                                                         |
+| :------------------------ | :--------------------------------------------------------------|
+| `npm install`             | Instala todas las dependencias necesarias.                     |
+| `npm run dev`             | Inicia el servidor de desarrollo local en localhost:4321.      |
+| `npm run build`           | Compila el sitio listo para producción en la carpeta ./dist/.  |
+| `npm run preview`         | Previsualiza la compilación localmente antes de desplegar.     |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## 🛠️ Entorno y Asistentes de IA
+Este repositorio puede contener archivos opcionales (AGENTS.md, CLAUDE.md) diseñados para proporcionar contexto y reglas de desarrollo a los asistentes de código por Inteligencia Artificial.
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+**Desarrollado por Minji.**
