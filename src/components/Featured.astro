@@ -50,8 +50,8 @@ const featured = featuredIds.map((id) => cookies.find((c) => c.id === id)!);
 		</div>
 
 		<div class="more">
-			<a href="/catalogo" class="btn btn-ghost">Ver todo el catálogo</a>
-			<a href="/armar-pack" class="btn btn-primary">Armar mi pack</a>
+			<a href={`${import.meta.env.BASE_URL}/catalogo`} class="btn btn-ghost">Ver todo el catálogo</a>
+			<a href={`${import.meta.env.BASE_URL}/armar-pack`} class="btn btn-primary">Armar mi pack</a>
 		</div>
 	</div>
 </section>

@@ -36,4 +36,7 @@ Para levantar el proyecto en tu entorno local, asegúrate de tener Node.js insta
 | `npm run build`           | Compila el sitio listo para producción en la carpeta ./dist/.  |
 | `npm run preview`         | Previsualiza la compilación localmente antes de desplegar.     |
 
-Desarrollado por Minji.
+## 🛠️ Entorno y Asistentes de IA
+Este repositorio puede contener archivos opcionales (AGENTS.md, CLAUDE.md) diseñados para proporcionar contexto y reglas de desarrollo a los asistentes de código por Inteligencia Artificial.
+
+**Desarrollado por Minji.**

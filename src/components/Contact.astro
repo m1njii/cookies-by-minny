@@ -9,7 +9,7 @@ const url = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent('¡Hola! Q
 			<h2>¿Se te antojó? <em>Pide ahora.</em></h2>
 			<p>Arma tu pack en un minuto o escríbenos por WhatsApp para pedidos especiales.</p>
 			<div class="actions">
-				<a href="/armar-pack" class="btn btn-wa">Armar mi pack</a>
+				<a href={`${import.meta.env.BASE_URL}/armar-pack`} class="btn btn-wa">Armar mi pack</a>
 				<a href={url} target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Escribir por WhatsApp</a>
 			</div>
 		</div>

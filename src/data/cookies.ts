@@ -112,7 +112,7 @@ export const packs = [
 
 export const universities = ['UPN (Chorrillos)', 'Universidad Autónoma'];
 
-export const whatsappPhone = '51993446468';
+export const whatsappPhone = '51935343336';
 
 /** Máximo de galletas por pedido cuando se compra por unidad (sin descuento). */
 export const unitMax = 12;

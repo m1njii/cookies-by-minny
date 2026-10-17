@@ -7,15 +7,15 @@ const wa = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent('¡Hola! Qu
 <footer class="footer">
 	<div class="wrap grid">
 		<div>
-			<a href="/" class="logo">Cookies<span>by</span>Minny</a>
+			<a href={import.meta.env.BASE_URL} class="logo">Cookies<span>by</span>Minny</a>
 			<p>Galletas artesanales hechas por estudiantes, con ingredientes de buena calidad.</p>
 		</div>
 		<div>
 			<h4>Explora</h4>
 			<ul>
-				<li><a href="/catalogo">Catálogo</a></li>
-				<li><a href="/armar-pack">Armar pack</a></li>
-				<li><a href="/nosotros">Nosotros</a></li>
+				<li><a href={`${import.meta.env.BASE_URL}/catalogo`}>Catálogo</a></li>
+				<li><a href={`${import.meta.env.BASE_URL}/armar-pack`}>Armar pack</a></li>
+				<li><a href={`${import.meta.env.BASE_URL}/nosotros`}>Nosotros</a></li>
 			</ul>
 		</div>
 		<div>
@@ -28,7 +28,7 @@ const wa = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent('¡Hola! Qu
 			<h4>Contacto</h4>
 			<ul>
 				<li><a href={wa} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-				<li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+				<li><a href="https://www.instagram.com/minnysbakery/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
 			</ul>
 		</div>
 	</div>
