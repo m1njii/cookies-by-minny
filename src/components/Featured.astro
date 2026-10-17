@@ -12,15 +12,120 @@ const featured = featuredIds.map((id) => cookies.find((c) => c.id === id)!);
 			<h2>Las <em>favoritas</em> de la uni</h2>
 			<p>Tres galletas que no fallan. ¿Quieres ver todo el menú?</p>
 		</div>
-		<div class="grid">
-			{featured.map((c) => <CookieCard cookie={c} />)}
+
+		<div class="carousel-wrapper">
+			<div class="grid" id="featured-carousel">
+				{featured.map((c, i) => (
+					<div class="carousel-slide" data-slide-index={i}>
+						<CookieCard cookie={c} />
+					</div>
+				))}
+			</div>
+
+			<!-- Controles e indicadores para móvil / carrusel -->
+			<div class="carousel-nav" aria-label="Navegación de galletas">
+				<button type="button" class="nav-arrow prev" id="feat-prev" aria-label="Galleta anterior">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M15 18l-6-6 6-6" />
+					</svg>
+				</button>
+				<div class="dots" id="feat-dots" role="tablist" aria-label="Selector de galleta">
+					{featured.map((c, i) => (
+						<button
+							type="button"
+							class:list={['dot', { active: i === 0 }]}
+							data-index={i}
+							role="tab"
+							aria-selected={i === 0 ? 'true' : 'false'}
+							aria-label={`Ver ${c.name}`}
+						/>
+					))}
+				</div>
+				<button type="button" class="nav-arrow next" id="feat-next" aria-label="Siguiente galleta">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M9 18l6-6-6-6" />
+					</svg>
+				</button>
+			</div>
 		</div>
+
 		<div class="more">
 			<a href="/catalogo" class="btn btn-ghost">Ver todo el catálogo</a>
 			<a href="/armar-pack" class="btn btn-primary">Armar mi pack</a>
 		</div>
 	</div>
 </section>
+
+<script>
+	const carousel = document.getElementById('featured-carousel');
+	const slides = carousel?.querySelectorAll<HTMLElement>('.carousel-slide');
+	const dots = document.querySelectorAll<HTMLButtonElement>('#feat-dots .dot');
+	const prevBtn = document.getElementById('feat-prev');
+	const nextBtn = document.getElementById('feat-next');
+
+	if (carousel && slides && slides.length > 0) {
+		let activeIndex = 0;
+
+		const updateActive = (index: number) => {
+			activeIndex = Math.max(0, Math.min(index, slides.length - 1));
+			dots.forEach((dot, i) => {
+				const isActive = i === activeIndex;
+				dot.classList.toggle('active', isActive);
+				dot.setAttribute('aria-selected', String(isActive));
+			});
+		};
+
+		const scrollToIndex = (index: number) => {
+			if (index < 0 || index >= slides.length) return;
+			const target = slides[index];
+			const targetLeft = target.offsetLeft - (carousel.clientWidth - target.clientWidth) / 2;
+			carousel.scrollTo({ left: targetLeft, behavior: 'smooth' });
+			updateActive(index);
+		};
+
+		prevBtn?.addEventListener('click', () => {
+			const targetIdx = activeIndex > 0 ? activeIndex - 1 : slides.length - 1;
+			scrollToIndex(targetIdx);
+		});
+
+		nextBtn?.addEventListener('click', () => {
+			const targetIdx = activeIndex < slides.length - 1 ? activeIndex + 1 : 0;
+			scrollToIndex(targetIdx);
+		});
+
+		dots.forEach((dot) => {
+			dot.addEventListener('click', () => {
+				const idx = Number(dot.dataset.index);
+				scrollToIndex(idx);
+			});
+		});
+
+		// Detección automática del slide activo al deslizar con el dedo
+		let scrollTimeout: number;
+		carousel.addEventListener('scroll', () => {
+			clearTimeout(scrollTimeout);
+			scrollTimeout = window.setTimeout(() => {
+				const carouselRect = carousel.getBoundingClientRect();
+				const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+				let closestIdx = 0;
+				let minDiff = Infinity;
+
+				slides.forEach((slide, i) => {
+					const rect = slide.getBoundingClientRect();
+					const slideCenter = rect.left + rect.width / 2;
+					const diff = Math.abs(carouselCenter - slideCenter);
+					if (diff < minDiff) {
+						minDiff = diff;
+						closestIdx = i;
+					}
+				});
+
+				updateActive(closestIdx);
+			}, 60);
+		}, { passive: true });
+	}
+</script>
 
 <style>
 	.featured {
@@ -43,11 +148,29 @@ const featured = featuredIds.map((id) => cookies.find((c) => c.id === id)!);
 		color: var(--choco-soft);
 		margin-top: 0.6rem;
 	}
+
+	/* En escritorio (PC): Grid elegante de 3 columnas */
+	.carousel-wrapper {
+		position: relative;
+	}
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+		grid-template-columns: repeat(3, 1fr);
 		gap: 1.5rem;
 	}
+	.carousel-slide {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+	.carousel-slide :global(.card) {
+		height: 100%;
+		flex: 1;
+	}
+	.carousel-nav {
+		display: none;
+	}
+
 	.more {
 		display: flex;
 		gap: 1rem;
@@ -55,10 +178,87 @@ const featured = featuredIds.map((id) => cookies.find((c) => c.id === id)!);
 		flex-wrap: wrap;
 		margin-top: 3rem;
 	}
-	@media (max-width: 600px) {
-		.featured { padding: 3rem 0; border-radius: 32px 32px 0 0; }
-		.head { margin-bottom: 1.8rem; }
-		.more { margin-top: 2rem; }
-		.more .btn { flex: 1 1 100%; text-align: center; }
+
+	/* En responsive (móvil y tablets angostas): Carrusel táctil con deslizamiento fluido */
+	@media (max-width: 768px) {
+		.featured {
+			padding: 3rem 0;
+			border-radius: 32px 32px 0 0;
+		}
+		.head {
+			margin-bottom: 1.8rem;
+		}
+		.grid {
+			display: flex;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			gap: 1.1rem;
+			padding: 0.5rem 1rem 1rem;
+			-webkit-overflow-scrolling: touch;
+			scroll-behavior: smooth;
+			scrollbar-width: none;
+		}
+		.grid::-webkit-scrollbar {
+			display: none;
+		}
+		.carousel-slide {
+			flex: 0 0 84%;
+			max-width: 310px;
+			scroll-snap-align: center;
+			scroll-snap-stop: always;
+		}
+		.carousel-nav {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 1rem;
+			margin-top: 1rem;
+		}
+		.nav-arrow {
+			width: 38px;
+			height: 38px;
+			border-radius: 50%;
+			border: 2px solid var(--cream-dark);
+			background: var(--cream);
+			color: var(--choco);
+			display: grid;
+			place-items: center;
+			cursor: pointer;
+			transition: background 0.2s, transform 0.2s, border-color 0.2s;
+		}
+		.nav-arrow:hover {
+			background: var(--caramel);
+			border-color: var(--caramel);
+			color: #fff;
+		}
+		.nav-arrow:active {
+			transform: scale(0.92);
+		}
+		.dots {
+			display: flex;
+			align-items: center;
+			gap: 0.55rem;
+		}
+		.dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 999px;
+			border: none;
+			background: var(--cream-dark);
+			cursor: pointer;
+			padding: 0;
+			transition: width 0.3s ease, background 0.3s ease;
+		}
+		.dot.active {
+			width: 26px;
+			background: var(--caramel);
+		}
+		.more {
+			margin-top: 2rem;
+		}
+		.more .btn {
+			flex: 1 1 100%;
+			text-align: center;
+		}
 	}
 </style>

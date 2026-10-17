@@ -4,18 +4,46 @@ import Contact from '../components/Contact.astro';
 import { universities } from '../data/cookies';
 
 const steps = [
-	{ n: '01', title: 'Todo empezó en clase', text: 'Entre cursos y exámenes, nos juntamos a hornear por pura pasión. Las primeras galletas las vendimos a nuestros compañeros.' },
-	{ n: '02', title: 'Creciendo campus a campus', text: 'Hoy repartimos en UPN Chorrillos y en la Universidad Autónoma del Perú. Cada pedido nos impulsa a seguir.' },
-	{ n: '03', title: 'El gran sueño', text: 'Abrir nuestra propia cafetería: un lugar bonito, rico y acogedor donde pasar un buen momento.' },
+	{
+		n: '01',
+		title: 'Todo empezó en clase',
+		text: 'Entre cursos y exámenes, nos juntamos a hornear por pura pasión. Las primeras galletas las vendimos a nuestros compañeros.',
+	},
+	{
+		n: '02',
+		title: 'Creciendo campus a campus',
+		text: 'Hoy repartimos en UPN Chorrillos y en la Universidad Autónoma del Perú. Cada pedido nos impulsa a seguir.',
+	},
+	{
+		n: '03',
+		title: 'El gran sueño',
+		text: 'Abrir nuestra propia cafetería: un lugar bonito, rico y acogedor donde pasar un buen momento.',
+	},
 ];
+
 const values = [
-	{ icon: '🧈', title: 'Ingredientes de calidad', text: 'Mantequilla real, buen chocolate y huevos frescos. Si no lo comeríamos nosotros, no lo horneamos.' },
-	{ icon: '🤲', title: 'Hecho a mano', text: 'Amasamos y horneamos en pequeños lotes para que cada galleta llegue suave y recién hecha.' },
-	{ icon: '💛', title: 'Más que vender', text: 'La repostería es nuestra forma de expresarnos y de regalar un momento de alegría.' },
+	{
+		icon: '🧈',
+		title: 'Ingredientes de calidad',
+		text: 'Mantequilla real, buen chocolate y huevos frescos. Si no lo comeríamos nosotros, no lo horneamos.',
+	},
+	{
+		icon: '🤲',
+		title: 'Hecho a mano',
+		text: 'Amasamos y horneamos en pequeños lotes para que cada galleta llegue suave y recién hecha.',
+	},
+	{
+		icon: '💛',
+		title: 'Más que vender',
+		text: 'La repostería es nuestra forma de expresarnos y de regalar un momento de alegría.',
+	},
 ];
 ---
 
-<Layout title="Nosotros | CookiesByMinny" description="Somos estudiantes con pasión por la repostería. Conoce nuestra historia y nuestro sueño de abrir una cafetería.">
+<Layout
+	title="Nosotros | CookiesByMinny"
+	description="Somos estudiantes con pasión por la repostería. Conoce nuestra historia y nuestro sueño de abrir una cafetería."
+>
 	<section class="page-hero">
 		<div class="wrap">
 			<h1>Hola, somos <em>CookiesByMinny</em></h1>
@@ -39,40 +67,264 @@ const values = [
 		</div>
 	</section>
 
+	<!-- Sección: Nuestro camino (Grid en PC, Carrusel automático de 5s en móvil) -->
 	<section class="path">
 		<div class="wrap">
 			<h2>Nuestro <em>camino</em></h2>
-			<ol>
-				{steps.map((s) => (
-					<li><span class="n">{s.n}</span><h3>{s.title}</h3><p>{s.text}</p></li>
-				))}
-			</ol>
-		</div>
-	</section>
 
-	<section class="values">
-		<div class="wrap">
-			<h2>Lo que nos <em>importa</em></h2>
-			<div class="grid">
-				{values.map((v) => (
-					<div class="v"><span>{v.icon}</span><h3>{v.title}</h3><p>{v.text}</p></div>
-				))}
+			<div class="carousel-holder">
+				<ol class="path-list" id="path-carousel" aria-label="Línea de tiempo de nuestro camino">
+					{steps.map((s, idx) => (
+						<li class="path-item" data-step-index={idx}>
+							<span class="n">{s.n}</span>
+							<h3>{s.title}</h3>
+							<p>{s.text}</p>
+						</li>
+					))}
+				</ol>
+
+				<!-- Controles móvil con auto-rotación de 5s -->
+				<div class="mobile-section-nav" aria-label="Controles de nuestro camino">
+					<button type="button" class="ctrl-arrow prev" id="path-prev" aria-label="Paso anterior">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M15 18l-6-6 6-6" />
+						</svg>
+					</button>
+
+					<div class="step-dots" id="path-dots" role="tablist" aria-label="Pasos">
+						{steps.map((_, i) => (
+							<button
+								type="button"
+								class:list={['s-dot', { active: i === 0 }]}
+								data-index={i}
+								role="tab"
+								aria-selected={i === 0 ? 'true' : 'false'}
+								aria-label={`Ver paso ${i + 1}`}
+							/>
+						))}
+					</div>
+
+					<button type="button" class="ctrl-arrow next" id="path-next" aria-label="Siguiente paso">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M9 18l6-6-6-6" />
+						</svg>
+					</button>
+				</div>
 			</div>
 		</div>
 	</section>
 
+	<!-- Sección: Lo que nos importa (Grid en PC, Carrusel automático de 5s en móvil) -->
+	<section class="values">
+		<div class="wrap">
+			<h2>Lo que nos <em>importa</em></h2>
+
+			<div class="carousel-holder">
+				<div class="values-list" id="values-carousel" aria-label="Nuestros valores e ingredientes">
+					{values.map((v, idx) => (
+						<div class="value-item" data-value-index={idx}>
+							<span class="value-icon">{v.icon}</span>
+							<h3>{v.title}</h3>
+							<p>{v.text}</p>
+						</div>
+					))}
+				</div>
+
+				<!-- Controles móvil con auto-rotación de 5s -->
+				<div class="mobile-section-nav theme-dark" aria-label="Controles de lo que nos importa">
+					<button type="button" class="ctrl-arrow prev" id="val-prev" aria-label="Valor anterior">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M15 18l-6-6 6-6" />
+						</svg>
+					</button>
+
+					<div class="step-dots" id="val-dots" role="tablist" aria-label="Valores">
+						{values.map((_, i) => (
+							<button
+								type="button"
+								class:list={['s-dot', { active: i === 0 }]}
+								data-index={i}
+								role="tab"
+								aria-selected={i === 0 ? 'true' : 'false'}
+								aria-label={`Ver valor ${i + 1}`}
+							/>
+						))}
+					</div>
+
+					<button type="button" class="ctrl-arrow next" id="val-next" aria-label="Siguiente valor">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M9 18l6-6-6-6" />
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Sección: Universidades con animación de flotación interactiva -->
 	<section class="where">
 		<div class="wrap">
+			<span class="where-badge">Puntos de entrega</span>
 			<h2>¿Dónde nos encuentras?</h2>
-			<p>Hacemos entregas en:</p>
+			<p>Hacemos entregas coordinadas directamente en los campus de:</p>
+
 			<div class="places">
-				{universities.map((u) => <span>📍 {u}</span>)}
+				{universities.map((u, i) => (
+					<div class:list={['uni-card', `float-card-${i + 1}`]}>
+						<div class="uni-icon-wrap" aria-hidden="true">
+							<span class="uni-pin">📍</span>
+						</div>
+						<div class="uni-text">
+							<strong>{u}</strong>
+							<span class="uni-sub">Entrega rápida en campus 🍪</span>
+						</div>
+					</div>
+				))}
 			</div>
 		</div>
 	</section>
 
 	<Contact />
 </Layout>
+
+<script>
+	// Función reutilizable para carruseles automáticos de 5s en móvil
+	function setupCarousel(config: {
+		containerId: string;
+		slideSelector: string;
+		prevBtnId: string;
+		nextBtnId: string;
+		dotsId: string;
+	}) {
+		const container = document.getElementById(config.containerId);
+		const slides = container?.querySelectorAll<HTMLElement>(config.slideSelector);
+		const prevBtn = document.getElementById(config.prevBtnId) as HTMLButtonElement | null;
+		const nextBtn = document.getElementById(config.nextBtnId) as HTMLButtonElement | null;
+		const dots = document.querySelectorAll<HTMLButtonElement>(`#${config.dotsId} .s-dot`);
+
+		if (!container || !slides || slides.length === 0) return;
+
+		let activeIndex = 0;
+		let timerId: number | undefined;
+		let isPaused = false;
+		const INTERVAL = 5000;
+
+		const updateDots = (index: number) => {
+			activeIndex = Math.max(0, Math.min(index, slides.length - 1));
+			dots.forEach((dot, i) => {
+				const isActive = i === activeIndex;
+				dot.classList.toggle('active', isActive);
+				dot.setAttribute('aria-selected', String(isActive));
+			});
+		};
+
+		let isVisible = false;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					isVisible = entry.isIntersecting;
+				});
+			},
+			{ threshold: 0.25 },
+		);
+		observer.observe(container);
+
+		const scrollToIndex = (index: number) => {
+			const targetIdx = (index + slides.length) % slides.length;
+			const targetSlide = slides[targetIdx];
+			// Solo desplazamos horizontalmente el contenedor interno, NUNCA la ventana ni la página completa
+			const targetLeft = targetSlide.offsetLeft - (container.clientWidth - targetSlide.clientWidth) / 2;
+			container.scrollTo({ left: targetLeft, behavior: 'smooth' });
+			updateDots(targetIdx);
+		};
+
+		const startAuto = () => {
+			stopAuto();
+			timerId = window.setInterval(() => {
+				// Solo avanza automáticamente en móvil si el usuario está viendo actualmente el carrusel en pantalla
+				if (window.innerWidth <= 768 && !isPaused && isVisible) {
+					scrollToIndex(activeIndex + 1);
+				}
+			}, INTERVAL);
+		};
+
+		const stopAuto = () => {
+			if (timerId !== undefined) {
+				clearInterval(timerId);
+				timerId = undefined;
+			}
+		};
+
+		prevBtn?.addEventListener('click', () => {
+			scrollToIndex(activeIndex - 1);
+			startAuto();
+		});
+
+		nextBtn?.addEventListener('click', () => {
+			scrollToIndex(activeIndex + 1);
+			startAuto();
+		});
+
+		dots.forEach((dot) => {
+			dot.addEventListener('click', () => {
+				const idx = Number(dot.dataset.index);
+				scrollToIndex(idx);
+				startAuto();
+			});
+		});
+
+		// Detección táctil (Swipe)
+		let scrollTimeout: number;
+		container.addEventListener(
+			'scroll',
+			() => {
+				clearTimeout(scrollTimeout);
+				scrollTimeout = window.setTimeout(() => {
+					const cRect = container.getBoundingClientRect();
+					const cCenter = cRect.left + cRect.width / 2;
+					let closest = 0;
+					let minDiff = Infinity;
+					slides.forEach((slide, i) => {
+						const sRect = slide.getBoundingClientRect();
+						const sCenter = sRect.left + sRect.width / 2;
+						const diff = Math.abs(cCenter - sCenter);
+						if (diff < minDiff) {
+							minDiff = diff;
+							closest = i;
+						}
+					});
+					updateDots(closest);
+				}, 60);
+			},
+			{ passive: true },
+		);
+
+		// Pausar rotación si el usuario toca la pantalla para leer
+		container.addEventListener('touchstart', () => { isPaused = true; }, { passive: true });
+		container.addEventListener('touchend', () => { isPaused = false; }, { passive: true });
+		container.addEventListener('mouseenter', () => { isPaused = true; });
+		container.addEventListener('mouseleave', () => { isPaused = false; });
+
+		startAuto();
+	}
+
+	// Inicializar carruseles
+	setupCarousel({
+		containerId: 'path-carousel',
+		slideSelector: '.path-item',
+		prevBtnId: 'path-prev',
+		nextBtnId: 'path-next',
+		dotsId: 'path-dots',
+	});
+
+	setupCarousel({
+		containerId: 'values-carousel',
+		slideSelector: '.value-item',
+		prevBtnId: 'val-prev',
+		nextBtnId: 'val-next',
+		dotsId: 'val-dots',
+	});
+</script>
 
 <style>
 	.narrow {
@@ -98,19 +350,28 @@ const values = [
 	h2 em {
 		color: var(--caramel);
 	}
+
+	/* ---------- Sección Nuestro Camino (Desktop: Grid) ---------- */
 	.path {
 		padding: 4.5rem 0;
 	}
-	ol {
+	.carousel-holder {
+		position: relative;
+	}
+	.path-list {
 		list-style: none;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		grid-template-columns: repeat(3, 1fr);
 		gap: 1.5rem;
 	}
-	ol li {
+	.path-item {
 		background: #fff;
 		border-radius: var(--radius);
 		padding: 1.8rem;
+		border: 2px solid transparent;
+		box-shadow: 0 8px 20px rgba(59, 34, 24, 0.05);
+		display: flex;
+		flex-direction: column;
 	}
 	.n {
 		font-family: var(--font-display);
@@ -119,66 +380,298 @@ const values = [
 		color: var(--caramel);
 		line-height: 1;
 	}
-	h3 {
+	.path-item h3 {
 		margin: 0.6rem 0 0.4rem;
 		font-size: 1.2rem;
 	}
-	li p,
-	.v p {
+	.path-item p {
 		color: var(--choco-soft);
+		font-size: 0.95rem;
+		line-height: 1.5;
 	}
+
+	/* ---------- Sección Lo Que Nos Importa (Desktop: Grid) ---------- */
 	.values {
 		background: var(--choco);
 		color: var(--cream);
 		padding: 4.5rem 0;
 		border-radius: 48px;
 	}
-	.grid {
+	.values-list {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		grid-template-columns: repeat(3, 1fr);
 		gap: 1.5rem;
 	}
-	.v {
+	.value-item {
 		background: rgba(255, 255, 255, 0.07);
 		border-radius: var(--radius);
 		padding: 1.8rem;
+		display: flex;
+		flex-direction: column;
+		border: 1px solid rgba(255, 255, 255, 0.1);
 	}
-	.v span {
-		font-size: 2rem;
+	.value-icon {
+		font-size: 2.2rem;
+		line-height: 1;
+		margin-bottom: 0.6rem;
 	}
-	.values .v p {
+	.value-item h3 {
+		margin-bottom: 0.4rem;
+		font-size: 1.25rem;
+	}
+	.value-item p {
 		color: var(--cream);
-		opacity: 0.8;
+		opacity: 0.85;
+		font-size: 0.95rem;
+		line-height: 1.5;
 	}
+
+	/* Controles de carrusel ocultos en escritorio */
+	.mobile-section-nav {
+		display: none;
+	}
+
+	/* ---------- Sección Universidades: Tarjetas con animación flotante ---------- */
 	.where {
 		text-align: center;
-		padding: 4.5rem 0 1rem;
+		padding: 5rem 0 2rem;
+	}
+	.where-badge {
+		display: inline-block;
+		background: var(--cream-dark);
+		padding: 0.35rem 1rem;
+		border-radius: 999px;
+		font-weight: 700;
+		font-size: 0.85rem;
+		margin-bottom: 1rem;
+		color: var(--choco);
 	}
 	.where h2 {
 		margin-bottom: 0.6rem;
 	}
 	.where p {
 		color: var(--choco-soft);
+		font-size: 1.05rem;
 	}
+
 	.places {
 		display: flex;
-		gap: 1rem;
+		gap: 2rem;
 		justify-content: center;
 		flex-wrap: wrap;
-		margin-top: 1.2rem;
+		margin-top: 2.5rem;
+		padding: 1.5rem 0;
 	}
-	.places span {
+
+	.uni-card {
 		background: #fff;
-		padding: 0.7rem 1.4rem;
-		border-radius: 999px;
+		padding: 1.2rem 2rem;
+		border-radius: 28px;
+		display: flex;
+		align-items: center;
+		gap: 1.1rem;
+		border: 2px solid var(--cream-dark);
+		box-shadow: 0 16px 36px rgba(59, 34, 24, 0.09);
+		cursor: default;
+		transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+		will-change: transform;
+	}
+
+	.uni-card:hover {
+		border-color: var(--caramel);
+		box-shadow: 0 22px 45px rgba(59, 34, 24, 0.15);
+	}
+
+	.uni-icon-wrap {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		background: var(--cream);
+		display: grid;
+		place-items: center;
+		font-size: 1.5rem;
+		border: 1px solid var(--cream-dark);
+		flex-shrink: 0;
+	}
+
+	.uni-text {
+		display: flex;
+		flex-direction: column;
+		text-align: left;
+	}
+
+	.uni-text strong {
+		font-family: var(--font-display);
+		font-size: 1.3rem;
+		color: var(--choco);
+	}
+
+	.uni-sub {
+		font-size: 0.82rem;
+		color: var(--caramel);
 		font-weight: 700;
 	}
-	@media (max-width: 600px) {
-		.story .lead { font-size: 1.25rem; }
-		.path, .where { padding: 3rem 0 1rem; }
-		.values { padding: 3rem 0; border-radius: 32px; }
-		h2 { margin-bottom: 1.8rem; }
-		ol li, .v { padding: 1.3rem; }
-		.places span { width: 100%; text-align: center; }
+
+	/* Animación de flotación levitante y desfasada */
+	.float-card-1 {
+		animation: floatOne 4.5s ease-in-out infinite;
+	}
+
+	.float-card-2 {
+		animation: floatTwo 5.2s ease-in-out -2.6s infinite;
+	}
+
+	@keyframes floatOne {
+		0%, 100% {
+			transform: translateY(0px) rotate(0deg);
+		}
+		50% {
+			transform: translateY(-13px) rotate(1.4deg);
+		}
+	}
+
+	@keyframes floatTwo {
+		0%, 100% {
+			transform: translateY(0px) rotate(0deg);
+		}
+		50% {
+			transform: translateY(-15px) rotate(-1.6deg);
+		}
+	}
+
+	/* ---------- Responsive (Móvil / Pantallas angostas <= 768px) ---------- */
+	@media (max-width: 768px) {
+		.story .lead {
+			font-size: 1.25rem;
+		}
+		.path,
+		.where {
+			padding: 3rem 0 1.5rem;
+		}
+		.values {
+			padding: 3.5rem 0;
+			border-radius: 32px;
+		}
+		h2 {
+			margin-bottom: 1.8rem;
+		}
+
+		/* Transformación a Carruseles móviles con Scroll-Snap */
+		.path-list,
+		.values-list {
+			display: flex;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			gap: 1.1rem;
+			padding: 0.5rem 1rem 1.2rem;
+			-webkit-overflow-scrolling: touch;
+			scroll-behavior: smooth;
+			scrollbar-width: none;
+		}
+		.path-list::-webkit-scrollbar,
+		.values-list::-webkit-scrollbar {
+			display: none;
+		}
+
+		.path-item,
+		.value-item {
+			flex: 0 0 84%;
+			max-width: 310px;
+			scroll-snap-align: center;
+			scroll-snap-stop: always;
+			padding: 1.4rem;
+		}
+
+		/* Controles de navegación y dots para móvil */
+		.mobile-section-nav {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 1rem;
+			margin-top: 1rem;
+		}
+
+		.ctrl-arrow {
+			width: 38px;
+			height: 38px;
+			border-radius: 50%;
+			border: 2px solid var(--cream-dark);
+			background: var(--cream);
+			color: var(--choco);
+			display: grid;
+			place-items: center;
+			cursor: pointer;
+			transition: background 0.2s, transform 0.2s, border-color 0.2s;
+		}
+		.ctrl-arrow:hover {
+			background: var(--caramel);
+			border-color: var(--caramel);
+			color: #fff;
+		}
+		.ctrl-arrow:active {
+			transform: scale(0.92);
+		}
+
+		.step-dots {
+			display: flex;
+			align-items: center;
+			gap: 0.55rem;
+		}
+		.s-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 999px;
+			border: none;
+			background: var(--cream-dark);
+			cursor: pointer;
+			padding: 0;
+			transition: width 0.3s ease, background 0.3s ease;
+		}
+		.s-dot.active {
+			width: 26px;
+			background: var(--caramel);
+		}
+
+		/* Variante de controles para la sección oscura "Lo que nos importa" */
+		.mobile-section-nav.theme-dark .ctrl-arrow {
+			background: rgba(255, 255, 255, 0.12);
+			border-color: rgba(255, 255, 255, 0.2);
+			color: var(--cream);
+		}
+		.mobile-section-nav.theme-dark .ctrl-arrow:hover {
+			background: var(--caramel);
+			border-color: var(--caramel);
+		}
+		.mobile-section-nav.theme-dark .s-dot {
+			background: rgba(255, 255, 255, 0.25);
+		}
+		.mobile-section-nav.theme-dark .s-dot.active {
+			background: var(--caramel);
+		}
+
+		/* Universidades en móvil */
+		.places {
+			flex-direction: column;
+			align-items: center;
+			gap: 1.5rem;
+			padding: 0.5rem 0;
+		}
+		.uni-card {
+			width: 100%;
+			max-width: 330px;
+			justify-content: flex-start;
+			padding: 1.1rem 1.4rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.float-card-1,
+		.float-card-2 {
+			animation: none !important;
+		}
+		.path-list,
+		.values-list {
+			scroll-behavior: auto;
+		}
 	}
 </style>

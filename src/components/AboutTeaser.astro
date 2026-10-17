@@ -1,8 +1,23 @@
 ---
 const items = [
-	{ icon: '🧈', title: 'Mantequilla real', text: 'Nada de margarinas: la mantequilla le da ese sabor y esa textura que se nota.' },
-	{ icon: '🍫', title: 'Buen chocolate', text: 'Chocolate de calidad en chips y trozos, no el que se vuelve cera al hornear.' },
-	{ icon: '🥚', title: 'Ingredientes frescos', text: 'Huevos, vainilla y harina elegidos con cuidado, lote a lote.' },
+	{
+		icon: '🧈',
+		title: 'Mantequilla real',
+		text: 'Nada de margarinas: la mantequilla le da ese sabor y esa textura que se nota.',
+		tag: 'Textura suave',
+	},
+	{
+		icon: '🍫',
+		title: 'Buen chocolate',
+		text: 'Chocolate de calidad en chips y trozos, no el que se vuelve cera al hornear.',
+		tag: 'Cacao real',
+	},
+	{
+		icon: '🥚',
+		title: 'Ingredientes frescos',
+		text: 'Huevos, vainilla y harina elegidos con cuidado, lote a lote.',
+		tag: '100% fresco',
+	},
 ];
 ---
 
@@ -17,25 +32,214 @@ const items = [
 			</p>
 			<a href="/nosotros" class="btn btn-ghost">Conoce nuestra historia</a>
 		</div>
-		<ul class="items">
-			{items.map((i) => (
-				<li>
-					<span class="icon">{i.icon}</span>
-					<div><h3>{i.title}</h3><p>{i.text}</p></div>
-				</li>
-			))}
-		</ul>
+
+		<!-- Carrusel de cartas 3D apiladas e interactivas -->
+		<div class="deck-container" id="teaser-deck">
+			<div class="deck-stack" id="deck-stack" aria-label="Ingredientes destacados">
+				{items.map((i, idx) => (
+					<article
+						class="deck-card"
+						data-card-index={idx}
+						data-pos={idx}
+						role="button"
+						tabindex="0"
+						aria-label={`${i.title}: ${i.text}`}
+					>
+						<div class="card-top">
+							<span class="icon">{i.icon}</span>
+							<span class="tag">{i.tag}</span>
+						</div>
+						<div class="card-body">
+							<h3>{i.title}</h3>
+							<p>{i.text}</p>
+						</div>
+						<div class="card-bottom">
+							<span class="counter">0{idx + 1} / 0{items.length}</span>
+							<span class="hint">Clic para pasar →</span>
+						</div>
+					</article>
+				))}
+			</div>
+
+			<!-- Barra de progreso de los 5 segundos -->
+			<div class="timer-track" aria-hidden="true">
+				<div class="timer-bar" id="deck-timer-bar"></div>
+			</div>
+
+			<!-- Controles e indicadores manuales -->
+			<div class="deck-controls">
+				<button type="button" class="ctrl-btn prev" id="deck-prev" aria-label="Tarjeta anterior">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M15 18l-6-6 6-6" />
+					</svg>
+				</button>
+
+				<div class="deck-dots" id="deck-dots" role="tablist" aria-label="Selector de tarjeta">
+					{items.map((item, idx) => (
+						<button
+							type="button"
+							class:list={['deck-dot', { active: idx === 0 }]}
+							data-dot-index={idx}
+							role="tab"
+							aria-selected={idx === 0 ? 'true' : 'false'}
+							aria-label={`Ver ${item.title}`}
+						/>
+					))}
+				</div>
+
+				<button type="button" class="ctrl-btn next" id="deck-next" aria-label="Siguiente tarjeta">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M9 18l6-6-6-6" />
+					</svg>
+				</button>
+			</div>
+		</div>
 	</div>
 </section>
+
+<script>
+	const deckWrapper = document.getElementById('teaser-deck');
+	const cards = deckWrapper?.querySelectorAll<HTMLElement>('.deck-card');
+	const dots = deckWrapper?.querySelectorAll<HTMLButtonElement>('.deck-dot');
+	const prevBtn = document.getElementById('deck-prev');
+	const nextBtn = document.getElementById('deck-next');
+	const timerBar = document.getElementById('deck-timer-bar');
+
+	if (deckWrapper && cards && cards.length > 0) {
+		const total = cards.length;
+		let currentIndex = 0;
+		let timerId: number | undefined;
+		let isPaused = false;
+		const INTERVAL_MS = 5000;
+
+		const resetTimerBar = () => {
+			if (!timerBar) return;
+			timerBar.style.animation = 'none';
+			// Forzar reflow para reiniciar la animación CSS
+			void timerBar.offsetWidth;
+			if (!isPaused) {
+				timerBar.style.animation = `fillTimer ${INTERVAL_MS}ms linear forwards`;
+			}
+		};
+
+		const updateCards = (nextIdx: number, direction: 'forward' | 'backward' = 'forward') => {
+			const prevFrontCard = deckWrapper.querySelector<HTMLElement>('.deck-card[data-pos="0"]');
+
+			// Animación especial al pasar adelante hacia atrás
+			if (direction === 'forward' && prevFrontCard) {
+				prevFrontCard.classList.add('passing-back');
+				setTimeout(() => {
+					prevFrontCard.classList.remove('passing-back');
+				}, 550);
+			}
+
+			currentIndex = (nextIdx + total) % total;
+
+			cards.forEach((card) => {
+				const cardIdx = Number(card.dataset.cardIndex);
+				const pos = (cardIdx - currentIndex + total) % total;
+				card.dataset.pos = String(pos);
+			});
+
+			dots?.forEach((dot, i) => {
+				const isActive = i === currentIndex;
+				dot.classList.toggle('active', isActive);
+				dot.setAttribute('aria-selected', String(isActive));
+			});
+
+			resetTimerBar();
+		};
+
+		const nextCard = () => updateCards(currentIndex + 1, 'forward');
+		const prevCard = () => updateCards(currentIndex - 1, 'backward');
+
+		const startAutoPlay = () => {
+			stopAutoPlay();
+			resetTimerBar();
+			timerId = window.setInterval(() => {
+				if (!isPaused) {
+					nextCard();
+				}
+			}, INTERVAL_MS);
+		};
+
+		const stopAutoPlay = () => {
+			if (timerId !== undefined) {
+				clearInterval(timerId);
+				timerId = undefined;
+			}
+		};
+
+		// Controles de botones
+		prevBtn?.addEventListener('click', () => {
+			prevCard();
+			startAutoPlay();
+		});
+
+		nextBtn?.addEventListener('click', () => {
+			nextCard();
+			startAutoPlay();
+		});
+
+		dots?.forEach((dot) => {
+			dot.addEventListener('click', () => {
+				const idx = Number(dot.dataset.dotIndex);
+				if (idx !== currentIndex) {
+					updateCards(idx, idx > currentIndex ? 'forward' : 'backward');
+					startAutoPlay();
+				}
+			});
+		});
+
+		// Clic directo en las cartas
+		cards.forEach((card) => {
+			card.addEventListener('click', () => {
+				const pos = Number(card.dataset.pos);
+				if (pos === 0) {
+					// Si hace clic en la carta frontal, pasa a la siguiente
+					nextCard();
+				} else {
+					// Si hace clic en una carta de atrás, la trae al frente
+					const cardIdx = Number(card.dataset.cardIndex);
+					updateCards(cardIdx, 'forward');
+				}
+				startAutoPlay();
+			});
+
+			// Soporte de accesibilidad con teclado (Enter o Espacio)
+			card.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					card.click();
+				}
+			});
+		});
+
+		// Pausar rotación si el usuario coloca el cursor encima para leer con calma
+		deckWrapper.addEventListener('mouseenter', () => {
+			isPaused = true;
+			if (timerBar) timerBar.style.animationPlayState = 'paused';
+		});
+
+		deckWrapper.addEventListener('mouseleave', () => {
+			isPaused = false;
+			if (timerBar) timerBar.style.animationPlayState = 'running';
+		});
+
+		// Iniciar rotación automática de 5 segundos
+		startAutoPlay();
+	}
+</script>
 
 <style>
 	.teaser {
 		padding: 5rem 0;
+		overflow: hidden;
 	}
 	.wrap {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 3rem;
+		grid-template-columns: 1fr 1.05fr;
+		gap: 3.5rem;
 		align-items: center;
 	}
 	.pill {
@@ -59,37 +263,258 @@ const items = [
 		color: var(--choco-soft);
 		font-size: 1.1rem;
 	}
-	.items {
-		list-style: none;
-		display: grid;
-		gap: 1rem;
-	}
-	.items li {
+
+	/* ---------- Contenedor del mazo de cartas apiladas ---------- */
+	.deck-container {
 		display: flex;
-		gap: 1rem;
-		align-items: flex-start;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+		max-width: 480px;
+		margin: 0 auto;
+		user-select: none;
+	}
+
+	.deck-stack {
+		position: relative;
+		width: 100%;
+		height: 200px;
+		perspective: 1000px;
+	}
+
+	/* Cada carta dentro del mazo */
+	.deck-card {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
 		background: #fff;
 		border-radius: var(--radius);
-		padding: 1.2rem 1.4rem;
+		padding: 1.3rem 1.5rem;
+		border: 2px solid var(--cream-dark);
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		cursor: pointer;
+		outline: none;
+		transition: transform 0.5s cubic-bezier(0.34, 1.25, 0.64, 1),
+			opacity 0.45s ease,
+			box-shadow 0.45s ease,
+			border-color 0.4s ease;
+		will-change: transform, opacity;
+	}
+
+	.deck-card:focus-visible {
+		border-color: var(--caramel);
+		box-shadow: 0 0 0 3px rgba(217, 138, 61, 0.3);
+	}
+
+	/* Estados de apilamiento: Adelante (0), Atrás (1), y Otro más atrás (2) */
+	.deck-card[data-pos="0"] {
+		transform: translateY(0px) scale(1);
+		z-index: 3;
+		opacity: 1;
+		box-shadow: 0 16px 36px rgba(59, 34, 24, 0.12), 0 4px 12px rgba(59, 34, 24, 0.05);
+		border-color: rgba(217, 138, 61, 0.35);
+	}
+
+	.deck-card[data-pos="1"] {
+		transform: translateY(22px) scale(0.93);
+		z-index: 2;
+		opacity: 0.82;
+		box-shadow: 0 10px 24px rgba(59, 34, 24, 0.08);
+	}
+
+	.deck-card[data-pos="2"] {
+		transform: translateY(42px) scale(0.86);
+		z-index: 1;
+		opacity: 0.6;
+		box-shadow: 0 6px 16px rgba(59, 34, 24, 0.05);
+	}
+
+	/* Animación fluida cuando la carta delantera pasa hacia atrás */
+	.deck-card.passing-back {
+		animation: passCardBack 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+	}
+
+	@keyframes passCardBack {
+		0% {
+			transform: translateY(0px) scale(1) rotate(0deg);
+			opacity: 1;
+			z-index: 5;
+		}
+		45% {
+			transform: translateY(-26px) translateX(42px) rotate(6deg) scale(1.02);
+			opacity: 0.95;
+			z-index: 5;
+		}
+		75% {
+			transform: translateY(30px) translateX(12px) rotate(1deg) scale(0.88);
+			opacity: 0.7;
+			z-index: 1;
+		}
+		100% {
+			transform: translateY(42px) translateX(0) rotate(0deg) scale(0.86);
+			opacity: 0.6;
+			z-index: 1;
+		}
+	}
+
+	/* Elementos internos de cada carta */
+	.card-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 	}
 	.icon {
 		font-size: 1.8rem;
+		line-height: 1;
 	}
-	h3 {
-		font-size: 1.1rem;
+	.tag {
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		background: var(--cream);
+		color: var(--caramel);
+		padding: 0.2rem 0.65rem;
+		border-radius: 999px;
+		border: 1px solid var(--cream-dark);
 	}
-	.items p {
+	.card-body h3 {
+		font-size: 1.2rem;
+		color: var(--choco);
+		margin-bottom: 0.25rem;
+	}
+	.card-body p {
 		color: var(--choco-soft);
-		font-size: 0.95rem;
+		font-size: 0.92rem;
+		line-height: 1.45;
 	}
+	.card-bottom {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 0.78rem;
+		color: var(--choco-soft);
+		opacity: 0.75;
+		margin-top: 0.2rem;
+		padding-top: 0.4rem;
+		border-top: 1px dashed rgba(107, 77, 65, 0.15);
+	}
+	.hint {
+		font-weight: 600;
+	}
+
+	/* Barra temporizadora de 5 segundos */
+	.timer-track {
+		width: 100%;
+		height: 3px;
+		background: var(--cream-dark);
+		border-radius: 999px;
+		margin-top: 2rem;
+		overflow: hidden;
+	}
+	.timer-bar {
+		width: 0%;
+		height: 100%;
+		background: var(--caramel);
+		border-radius: 999px;
+	}
+
+	@keyframes fillTimer {
+		from {
+			width: 0%;
+		}
+		to {
+			width: 100%;
+		}
+	}
+
+	/* Controles inferiores e indicadores */
+	.deck-controls {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		margin-top: 0.85rem;
+		width: 100%;
+	}
+	.ctrl-btn {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		border: 2px solid var(--cream-dark);
+		background: var(--cream);
+		color: var(--choco);
+		display: grid;
+		place-items: center;
+		cursor: pointer;
+		transition: background 0.2s, transform 0.2s, border-color 0.2s;
+	}
+	.ctrl-btn:hover {
+		background: var(--caramel);
+		border-color: var(--caramel);
+		color: #fff;
+	}
+	.ctrl-btn:active {
+		transform: scale(0.92);
+	}
+	.deck-dots {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.deck-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 999px;
+		border: none;
+		background: var(--cream-dark);
+		cursor: pointer;
+		padding: 0;
+		transition: width 0.3s ease, background 0.3s ease;
+	}
+	.deck-dot.active {
+		width: 24px;
+		background: var(--caramel);
+	}
+
+	/* Responsive */
 	@media (max-width: 860px) {
 		.wrap {
 			grid-template-columns: 1fr;
+			gap: 2.5rem;
+		}
+		.deck-container {
+			max-width: 440px;
 		}
 	}
+
 	@media (max-width: 600px) {
-		.teaser { padding: 3rem 0; }
-		.wrap { gap: 2rem; }
-		.items li { padding: 1rem; }
+		.teaser {
+			padding: 3rem 0;
+		}
+		.deck-stack {
+			height: 195px;
+		}
+		.deck-card {
+			padding: 1.1rem 1.25rem;
+		}
+		.card-body h3 {
+			font-size: 1.1rem;
+		}
+		.card-body p {
+			font-size: 0.88rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.deck-card,
+		.timer-bar {
+			transition: none !important;
+			animation: none !important;
+		}
 	}
 </style>

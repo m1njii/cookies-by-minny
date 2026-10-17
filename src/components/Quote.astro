@@ -55,7 +55,7 @@ const config = {
 					<div class="fields">
 						<label>
 							Tu nombre
-							<input type="text" id="name" placeholder="Ej. María Pérez" autocomplete="name" required />
+							<input type="text" id="name" placeholder="Ej. Juan Pérez" autocomplete="name" required />
 						</label>
 						<label>
 							Universidad de entrega
@@ -156,7 +156,7 @@ const config = {
 				b.classList.toggle('active', b === btn);
 				b.setAttribute('aria-checked', String(b === btn));
 			});
-			// Si el nuevo límite es menor, recorta el exceso.
+
 			let extra = total() - limit();
 			for (const c of [...cfg.cookies].reverse()) {
 				while (extra > 0 && qty[c.id] > 0) { qty[c.id]--; extra--; }
