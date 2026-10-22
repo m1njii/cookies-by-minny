@@ -13,7 +13,6 @@ import { cookies, categories } from '../data/cookies';
 			))}
 		</div>
 
-		<!-- En PC: Grid completo. En Móvil: Carrusel interactivo y deslizable -->
 		<div class="catalog-carousel-wrapper">
 			<div class="products" id="catalog-products">
 				{cookies.map((c) => (
@@ -23,7 +22,6 @@ import { cookies, categories } from '../data/cookies';
 				))}
 			</div>
 
-			<!-- Barra de navegación y contador exclusiva para móvil -->
 			<div class="mobile-catalog-nav" aria-label="Navegación del catálogo en móvil">
 				<button type="button" class="nav-btn prev" id="cat-prev" aria-label="Galleta anterior">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -101,7 +99,6 @@ import { cookies, categories } from '../data/cookies';
 		prevBtn?.addEventListener('click', () => scrollVisibleIndex(activeVisibleIndex - 1));
 		nextBtn?.addEventListener('click', () => scrollVisibleIndex(activeVisibleIndex + 1));
 
-		// Filtrado reactivo con reseteo suave del carrusel
 		chips.forEach((chip) =>
 			chip.addEventListener('click', () => {
 				const f = chip.dataset.filter;
@@ -119,13 +116,10 @@ import { cookies, categories } from '../data/cookies';
 
 				renderDots();
 				updateStatus(0);
-
-				// Resetear el scroll al primer elemento filtrado
 				container.scrollTo({ left: 0, behavior: 'smooth' });
 			}),
 		);
 
-		// Detección en tiempo real de gestos táctiles (Swipe)
 		let scrollTimeout: number;
 		container.addEventListener(
 			'scroll',
@@ -155,7 +149,6 @@ import { cookies, categories } from '../data/cookies';
 			{ passive: true },
 		);
 
-		// Inicialización
 		renderDots();
 		updateStatus(0);
 	}
@@ -194,7 +187,6 @@ import { cookies, categories } from '../data/cookies';
 		color: var(--cream);
 	}
 
-	/* En escritorio (PC): Cuadrícula amplia */
 	.catalog-carousel-wrapper {
 		position: relative;
 	}
@@ -221,7 +213,6 @@ import { cookies, categories } from '../data/cookies';
 		display: none;
 	}
 
-	/* En responsive (móvil y pantallas angostas): Carrusel táctil optimizado */
 	@media (max-width: 768px) {
 		.catalog {
 			padding: 2.5rem 0 3.5rem;
@@ -257,7 +248,6 @@ import { cookies, categories } from '../data/cookies';
 			scroll-snap-stop: always;
 		}
 
-		/* Barra de navegación inferior móvil */
 		.mobile-catalog-nav {
 			display: flex;
 			align-items: center;

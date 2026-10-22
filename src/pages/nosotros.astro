@@ -67,7 +67,6 @@ const values = [
 		</div>
 	</section>
 
-	<!-- Sección: Nuestro camino (Grid en PC, Carrusel automático de 5s en móvil) -->
 	<section class="path">
 		<div class="wrap">
 			<h2>Nuestro <em>camino</em></h2>
@@ -83,7 +82,6 @@ const values = [
 					))}
 				</ol>
 
-				<!-- Controles móvil con auto-rotación de 5s -->
 				<div class="mobile-section-nav" aria-label="Controles de nuestro camino">
 					<button type="button" class="ctrl-arrow prev" id="path-prev" aria-label="Paso anterior">
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -114,7 +112,6 @@ const values = [
 		</div>
 	</section>
 
-	<!-- Sección: Lo que nos importa (Grid en PC, Carrusel automático de 5s en móvil) -->
 	<section class="values">
 		<div class="wrap">
 			<h2>Lo que nos <em>importa</em></h2>
@@ -130,7 +127,6 @@ const values = [
 					))}
 				</div>
 
-				<!-- Controles móvil con auto-rotación de 5s -->
 				<div class="mobile-section-nav theme-dark" aria-label="Controles de lo que nos importa">
 					<button type="button" class="ctrl-arrow prev" id="val-prev" aria-label="Valor anterior">
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -161,7 +157,6 @@ const values = [
 		</div>
 	</section>
 
-	<!-- Sección: Universidades con animación de flotación interactiva -->
 	<section class="where">
 		<div class="wrap">
 			<span class="where-badge">Puntos de entrega</span>
@@ -188,7 +183,6 @@ const values = [
 </Layout>
 
 <script>
-	// Función reutilizable para carruseles automáticos de 5s en móvil
 	function setupCarousel(config: {
 		containerId: string;
 		slideSelector: string;
@@ -232,7 +226,6 @@ const values = [
 		const scrollToIndex = (index: number) => {
 			const targetIdx = (index + slides.length) % slides.length;
 			const targetSlide = slides[targetIdx];
-			// Solo desplazamos horizontalmente el contenedor interno, NUNCA la ventana ni la página completa
 			const targetLeft = targetSlide.offsetLeft - (container.clientWidth - targetSlide.clientWidth) / 2;
 			container.scrollTo({ left: targetLeft, behavior: 'smooth' });
 			updateDots(targetIdx);
@@ -241,7 +234,6 @@ const values = [
 		const startAuto = () => {
 			stopAuto();
 			timerId = window.setInterval(() => {
-				// Solo avanza automáticamente en móvil si el usuario está viendo actualmente el carrusel en pantalla
 				if (window.innerWidth <= 768 && !isPaused && isVisible) {
 					scrollToIndex(activeIndex + 1);
 				}
@@ -273,7 +265,6 @@ const values = [
 			});
 		});
 
-		// Detección táctil (Swipe)
 		let scrollTimeout: number;
 		container.addEventListener(
 			'scroll',
@@ -299,7 +290,6 @@ const values = [
 			{ passive: true },
 		);
 
-		// Pausar rotación si el usuario toca la pantalla para leer
 		container.addEventListener('touchstart', () => { isPaused = true; }, { passive: true });
 		container.addEventListener('touchend', () => { isPaused = false; }, { passive: true });
 		container.addEventListener('mouseenter', () => { isPaused = true; });
@@ -308,7 +298,6 @@ const values = [
 		startAuto();
 	}
 
-	// Inicializar carruseles
 	setupCarousel({
 		containerId: 'path-carousel',
 		slideSelector: '.path-item',
@@ -351,7 +340,6 @@ const values = [
 		color: var(--caramel);
 	}
 
-	/* ---------- Sección Nuestro Camino (Desktop: Grid) ---------- */
 	.path {
 		padding: 4.5rem 0;
 	}
@@ -390,7 +378,6 @@ const values = [
 		line-height: 1.5;
 	}
 
-	/* ---------- Sección Lo Que Nos Importa (Desktop: Grid) ---------- */
 	.values {
 		background: var(--choco);
 		color: var(--cream);
@@ -426,12 +413,10 @@ const values = [
 		line-height: 1.5;
 	}
 
-	/* Controles de carrusel ocultos en escritorio */
 	.mobile-section-nav {
 		display: none;
 	}
 
-	/* ---------- Sección Universidades: Tarjetas con animación flotante ---------- */
 	.where {
 		text-align: center;
 		padding: 5rem 0 2rem;
@@ -512,7 +497,6 @@ const values = [
 		font-weight: 700;
 	}
 
-	/* Animación de flotación levitante y desfasada */
 	.float-card-1 {
 		animation: floatOne 4.5s ease-in-out infinite;
 	}
@@ -539,7 +523,6 @@ const values = [
 		}
 	}
 
-	/* ---------- Responsive (Móvil / Pantallas angostas <= 768px) ---------- */
 	@media (max-width: 768px) {
 		.story .lead {
 			font-size: 1.25rem;
@@ -556,7 +539,6 @@ const values = [
 			margin-bottom: 1.8rem;
 		}
 
-		/* Transformación a Carruseles móviles con Scroll-Snap */
 		.path-list,
 		.values-list {
 			display: flex;
@@ -582,7 +564,6 @@ const values = [
 			padding: 1.4rem;
 		}
 
-		/* Controles de navegación y dots para móvil */
 		.mobile-section-nav {
 			display: flex;
 			align-items: center;
@@ -632,7 +613,6 @@ const values = [
 			background: var(--caramel);
 		}
 
-		/* Variante de controles para la sección oscura "Lo que nos importa" */
 		.mobile-section-nav.theme-dark .ctrl-arrow {
 			background: rgba(255, 255, 255, 0.12);
 			border-color: rgba(255, 255, 255, 0.2);
@@ -649,7 +629,6 @@ const values = [
 			background: var(--caramel);
 		}
 
-		/* Universidades en móvil */
 		.places {
 			flex-direction: column;
 			align-items: center;

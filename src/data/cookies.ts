@@ -100,11 +100,7 @@ export const cookies: Cookie[] = [
 ];
 
 export const formatPrice = (n: number) => `S/ ${n.toFixed(2)}`;
-/**
- * Packs disponibles. discount es el % de descuento sobre la suma de los precios
- * individuales de las galletas elegidas (así un pack mixto respeta el precio de cada sabor).
- * Ajusta estos valores según tus costos de producción.
- */
+
 export const packs = [
 	{ size: 3, discount: 0.1, label: 'Pack de 3' },
 	{ size: 5, discount: 0.15, label: 'Pack de 5' },
@@ -114,5 +110,4 @@ export const universities = ['UPN (Chorrillos)', 'Universidad Autónoma'];
 
 export const whatsappPhone = '51935343336';
 
-/** Máximo de galletas por pedido cuando se compra por unidad (sin descuento). */
 export const unitMax = 12;

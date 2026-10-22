@@ -97,11 +97,9 @@ const config = {
 		cookies: { id: string; name: string; price: number }[];
 	};
 
-	// Todo en céntimos para evitar errores de decimales.
 	const cents = (n: number) => Math.round(n * 100);
 	const fmt = (c: number) => `S/ ${(c / 100).toFixed(2)}`;
 
-	// size = 0 significa "por unidad" (sin descuento, cantidad libre hasta unitMax).
 	let size = cfg.packs[0].size;
 	const isUnit = () => size === 0;
 	const limit = () => (isUnit() ? cfg.unitMax : size);
@@ -116,7 +114,6 @@ const config = {
 		const regular = cfg.cookies.reduce((s, c) => s + cents(c.price) * qty[c.id], 0);
 		if (isUnit() || total() !== size) return { regular, final: regular, saving: 0 };
 		const discount = cfg.packs.find((p) => p.size === size)!.discount;
-		// Se redondea al décimo de sol (S/ 21.00 -> S/ 18.90).
 		const final = Math.round((regular * (1 - discount)) / 10) * 10;
 		return { regular, final, saving: regular - final };
 	}
@@ -171,7 +168,6 @@ const config = {
 		li.querySelector('[data-dec]')!.addEventListener('click', () => { if (qty[id] > 0) { qty[id]--; render(); } });
 	});
 
-	// Viene desde el catalogo: /armar-pack?add=id
 	const addId = new URLSearchParams(location.search).get('add');
 	if (addId && addId in qty) qty[addId]++;
 
@@ -198,7 +194,6 @@ const config = {
 		window.open(`https://wa.me/${cfg.phone}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
 	});
 
-// ---------- Barra fija inferior (móvil) ----------
 	const bar = $('#mbar');
 	const mbBtn = $<HTMLButtonElement>('#mb-btn');
 	let summaryVisible = false;

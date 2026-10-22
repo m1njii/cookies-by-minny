@@ -2,9 +2,9 @@
 const { pathname } = Astro.url;
 const links = [
 	{ name: 'Inicio', href: `${import.meta.env.BASE_URL}` },
-  	{ name: 'Catálogo', href: `${import.meta.env.BASE_URL}/catalogo` },
-  	{ name: 'Armar pack', href: `${import.meta.env.BASE_URL}/armar-pack` },
-  	{ name: 'Nosotros', href: `${import.meta.env.BASE_URL}/nosotros` },
+	{ name: 'Catálogo', href: `${import.meta.env.BASE_URL}/catalogo` },
+	{ name: 'Armar pack', href: `${import.meta.env.BASE_URL}/armar-pack` },
+	{ name: 'Nosotros', href: `${import.meta.env.BASE_URL}/nosotros` },
 ];
 const active = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 ---
@@ -109,7 +109,6 @@ const active = (href: string) => (href === '/' ? pathname === '/' : pathname.sta
 		display: none !important;
 	}
 
-	/* ---------- Móvil: menú desplegable animado ---------- */
 	@media (max-width: 720px) {
 		.cta {
 			display: none;

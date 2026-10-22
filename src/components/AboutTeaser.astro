@@ -33,7 +33,6 @@ const items = [
 			<a href={`${import.meta.env.BASE_URL}/nosotros`} class="btn btn-ghost">Conoce nuestra historia</a>
 		</div>
 
-		<!-- Carrusel de cartas 3D apiladas e interactivas -->
 		<div class="deck-container" id="teaser-deck">
 			<div class="deck-stack" id="deck-stack" aria-label="Ingredientes destacados">
 				{items.map((i, idx) => (
@@ -61,12 +60,10 @@ const items = [
 				))}
 			</div>
 
-			<!-- Barra de progreso de los 5 segundos -->
 			<div class="timer-track" aria-hidden="true">
 				<div class="timer-bar" id="deck-timer-bar"></div>
 			</div>
 
-			<!-- Controles e indicadores manuales -->
 			<div class="deck-controls">
 				<button type="button" class="ctrl-btn prev" id="deck-prev" aria-label="Tarjeta anterior">
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -115,7 +112,6 @@ const items = [
 		const resetTimerBar = () => {
 			if (!timerBar) return;
 			timerBar.style.animation = 'none';
-			// Forzar reflow para reiniciar la animación CSS
 			void timerBar.offsetWidth;
 			if (!isPaused) {
 				timerBar.style.animation = `fillTimer ${INTERVAL_MS}ms linear forwards`;
@@ -125,7 +121,6 @@ const items = [
 		const updateCards = (nextIdx: number, direction: 'forward' | 'backward' = 'forward') => {
 			const prevFrontCard = deckWrapper.querySelector<HTMLElement>('.deck-card[data-pos="0"]');
 
-			// Animación especial al pasar adelante hacia atrás
 			if (direction === 'forward' && prevFrontCard) {
 				prevFrontCard.classList.add('passing-back');
 				setTimeout(() => {
@@ -170,7 +165,6 @@ const items = [
 			}
 		};
 
-		// Controles de botones
 		prevBtn?.addEventListener('click', () => {
 			prevCard();
 			startAutoPlay();
@@ -191,22 +185,18 @@ const items = [
 			});
 		});
 
-		// Clic directo en las cartas
 		cards.forEach((card) => {
 			card.addEventListener('click', () => {
 				const pos = Number(card.dataset.pos);
 				if (pos === 0) {
-					// Si hace clic en la carta frontal, pasa a la siguiente
 					nextCard();
 				} else {
-					// Si hace clic en una carta de atrás, la trae al frente
 					const cardIdx = Number(card.dataset.cardIndex);
 					updateCards(cardIdx, 'forward');
 				}
 				startAutoPlay();
 			});
 
-			// Soporte de accesibilidad con teclado (Enter o Espacio)
 			card.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
 					e.preventDefault();
@@ -215,7 +205,6 @@ const items = [
 			});
 		});
 
-		// Pausar rotación si el usuario coloca el cursor encima para leer con calma
 		deckWrapper.addEventListener('mouseenter', () => {
 			isPaused = true;
 			if (timerBar) timerBar.style.animationPlayState = 'paused';
@@ -226,7 +215,6 @@ const items = [
 			if (timerBar) timerBar.style.animationPlayState = 'running';
 		});
 
-		// Iniciar rotación automática de 5 segundos
 		startAutoPlay();
 	}
 </script>
@@ -264,7 +252,6 @@ const items = [
 		font-size: 1.1rem;
 	}
 
-	/* ---------- Contenedor del mazo de cartas apiladas ---------- */
 	.deck-container {
 		display: flex;
 		flex-direction: column;
@@ -282,7 +269,6 @@ const items = [
 		perspective: 1000px;
 	}
 
-	/* Cada carta dentro del mazo */
 	.deck-card {
 		position: absolute;
 		top: 0;
@@ -310,7 +296,6 @@ const items = [
 		box-shadow: 0 0 0 3px rgba(217, 138, 61, 0.3);
 	}
 
-	/* Estados de apilamiento: Adelante (0), Atrás (1), y Otro más atrás (2) */
 	.deck-card[data-pos="0"] {
 		transform: translateY(0px) scale(1);
 		z-index: 3;
@@ -333,7 +318,6 @@ const items = [
 		box-shadow: 0 6px 16px rgba(59, 34, 24, 0.05);
 	}
 
-	/* Animación fluida cuando la carta delantera pasa hacia atrás */
 	.deck-card.passing-back {
 		animation: passCardBack 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 	}
@@ -361,7 +345,6 @@ const items = [
 		}
 	}
 
-	/* Elementos internos de cada carta */
 	.card-top {
 		display: flex;
 		align-items: center;
@@ -407,7 +390,6 @@ const items = [
 		font-weight: 600;
 	}
 
-	/* Barra temporizadora de 5 segundos */
 	.timer-track {
 		width: 100%;
 		height: 3px;
@@ -432,7 +414,6 @@ const items = [
 		}
 	}
 
-	/* Controles inferiores e indicadores */
 	.deck-controls {
 		display: flex;
 		align-items: center;
@@ -481,7 +462,6 @@ const items = [
 		background: var(--caramel);
 	}
 
-	/* Responsive */
 	@media (max-width: 860px) {
 		.wrap {
 			grid-template-columns: 1fr;

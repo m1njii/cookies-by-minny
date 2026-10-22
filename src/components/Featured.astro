@@ -22,7 +22,6 @@ const featured = featuredIds.map((id) => cookies.find((c) => c.id === id)!);
 				))}
 			</div>
 
-			<!-- Controles e indicadores para móvil / carrusel -->
 			<div class="carousel-nav" aria-label="Navegación de galletas">
 				<button type="button" class="nav-arrow prev" id="feat-prev" aria-label="Galleta anterior">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -100,7 +99,6 @@ const featured = featuredIds.map((id) => cookies.find((c) => c.id === id)!);
 			});
 		});
 
-		// Detección automática del slide activo al deslizar con el dedo
 		let scrollTimeout: number;
 		carousel.addEventListener('scroll', () => {
 			clearTimeout(scrollTimeout);
@@ -149,7 +147,6 @@ const featured = featuredIds.map((id) => cookies.find((c) => c.id === id)!);
 		margin-top: 0.6rem;
 	}
 
-	/* En escritorio (PC): Grid elegante de 3 columnas */
 	.carousel-wrapper {
 		position: relative;
 	}
@@ -179,7 +176,6 @@ const featured = featuredIds.map((id) => cookies.find((c) => c.id === id)!);
 		margin-top: 3rem;
 	}
 
-	/* En responsive (móvil y tablets angostas): Carrusel táctil con deslizamiento fluido */
 	@media (max-width: 768px) {
 		.featured {
 			padding: 3rem 0;
